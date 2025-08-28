@@ -148,6 +148,7 @@ export const useArchiveWorkflow = (): UseArchiveWorkflowResult => {
               originalUrl: state.url,
               snapshots: jobStatusHook.data!.website!.snapshots.map(snapshot => ({
                 ...snapshot,
+                jobId: jobStatusHook.data!.jobId,
                 createdAt: new Date(snapshot.createdAt),
                 updatedAt: new Date(snapshot.updatedAt),
               })),
