@@ -6,6 +6,7 @@ interface IJob extends Document {}
 
 export interface ISnapshot extends Document {
   website: Types.ObjectId | IWebsite;
+  path: string;
   status: 'processing' | 'completed' | 'failed';
   storagePath: string;
   entrypoint: string;
@@ -22,6 +23,12 @@ const SnapshotSchema = new Schema<ISnapshot>(
       ref: 'Website',
       required: true,
       index: true,
+    },
+    path: {
+      type: String,
+      required: true,
+      trim: true,
+      default: '/',
     },
     status: {
       type: String,

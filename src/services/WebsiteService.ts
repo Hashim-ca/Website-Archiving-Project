@@ -3,6 +3,7 @@ import { Website, IWebsite } from '../models/Website';
 import { ISnapshot } from '../models/Snapshot';
 import { GetWebsiteResponse } from '../types';
 import { ArchiveError } from '../types/errors';
+import { normalizeDomain } from '../utils/url';
 
 interface IWebsiteWithPopulatedSnapshots extends Omit<IWebsite, 'snapshots'> {
   snapshots: ISnapshot[];
@@ -16,8 +17,10 @@ export class WebsiteService {
     domain: string
   ): Promise<GetWebsiteResponse | null> {
     try {
-      // Find website by domain and populate snapshots
-      const website = await Website.findOne({ domain })
+      const normalizedDomain = normalizeDomain(domain);
+      
+      // Find website by normalized domain and populate snapshots
+      const website = await Website.findOne({ domain: normalizedDomain })
         .populate('snapshots')
         .exec() as IWebsiteWithPopulatedSnapshots | null;
 
@@ -31,6 +34,7 @@ export class WebsiteService {
         originalUrl: website.originalUrl,
         snapshots: website.snapshots.map((snapshot) => ({
           _id: (snapshot._id as Types.ObjectId).toString(),
+          path: snapshot.path,
           status: snapshot.status,
           storagePath: snapshot.storagePath,
           entrypoint: snapshot.entrypoint,

@@ -14,6 +14,7 @@ export interface GetWebsiteResponse {
   originalUrl: string;
   snapshots: {
     _id: string;
+    path: string;
     status: 'processing' | 'completed' | 'failed';
     storagePath: string;
     entrypoint: string;

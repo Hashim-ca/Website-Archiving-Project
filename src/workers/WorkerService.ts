@@ -6,6 +6,7 @@ import { FirecrawlService, FirecrawlResponse } from '../services/worker-services
 import { R2StorageService } from '../services/R2StorageService';
 import { AssetProcessingService } from '../services/worker-services/AssetProcessingService';
 import { ExternalServiceError } from '../types/errors';
+import { extractPath } from '../utils/url';
 
 export class WorkerService {
   private firecrawlService: FirecrawlService;
@@ -110,6 +111,7 @@ export class WorkerService {
   private async createSnapshot(job: IJob): Promise<ISnapshot> {
     const snapshot = new Snapshot({
       website: job.website,
+      path: extractPath(job.urlToArchive),
       status: 'processing',
       storagePath: `snapshots/${new Types.ObjectId().toString()}`,
       entrypoint: 'index.html',

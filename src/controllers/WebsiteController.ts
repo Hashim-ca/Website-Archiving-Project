@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { WebsiteService } from '../services/WebsiteService';
 import { GetWebsiteResponse } from '../types';
+import { normalizeDomain } from '../utils/url';
 
 export class WebsiteController {
   private websiteService: WebsiteService;
@@ -17,7 +18,7 @@ export class WebsiteController {
     res: Response<GetWebsiteResponse | { message: string }>
   ): Promise<void> => {
     try {
-      const { domain } = req.query;
+      const { domain, path } = req.query;
 
       // Validate domain query parameter
       if (!domain || typeof domain !== 'string') {
@@ -34,16 +35,21 @@ export class WebsiteController {
         return;
       }
 
-      // Get website with snapshots
-      const website = await this.websiteService.getWebsiteByDomain(
-        domain.trim()
-      );
+      // Get website with snapshots, optionally filtered by path
+      const website = await this.websiteService.getWebsiteByDomain(domain);
 
       if (!website) {
         res.status(404).json({
-          message: `Website not found for domain: ${domain}`,
+          message: `Website not found for domain: ${normalizeDomain(domain)}`,
         });
         return;
+      }
+
+      // Filter snapshots by path if provided
+      if (path && typeof path === 'string') {
+        website.snapshots = website.snapshots.filter(
+          (snapshot) => snapshot.path === path.trim()
+        );
       }
 
       // Return success response
