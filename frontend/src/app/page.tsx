@@ -1,53 +1,42 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 
-import { SearchBar, ActiveJobs } from '@/components/shared';
-import { useArchive, useUrlValidation, useActiveJobs } from '@/hooks';
+import { EnhancedSearchBar } from '@/components/shared';
+import { EnhancedActiveJobs } from '@/components/EnhancedActiveJobs';
+import { useEnhancedArchive } from '@/hooks/useEnhancedArchive';
+import { useSearchStore } from '@/stores/searchStore';
+import { useJobPolling } from '@/hooks/useJobPolling';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
 import { Archive, AlertTriangle, CheckCircle } from 'lucide-react';
 
-export default function Home() {
-  const [isCreating, setIsCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+function HomeContent() {
   const [success, setSuccess] = useState<string | null>(null);
+  const searchParams = useSearchParams();
   
-  const { extractDomain } = useUrlValidation();
-  const archive = useArchive();
-  const { addJob } = useActiveJobs();
+  const { createArchiveJob, isLoading, error } = useEnhancedArchive();
+  const { setCurrentQuery } = useSearchStore();
+  
+  // Initialize search from URL query parameter
+  useEffect(() => {
+    const queryParam = searchParams.get('q');
+    if (queryParam) {
+      setCurrentQuery(queryParam);
+    }
+  }, [searchParams, setCurrentQuery]);
+  
+  // Start job polling
+  useJobPolling();
 
   const handleSearch = async (url: string) => {
-    const domain = extractDomain(url);
-    if (!domain) {
-      setError('Invalid URL format');
-      return;
-    }
-
-    setIsCreating(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      // Create archive job
-      const result = await archive.createArchiveJob(url);
-      if (result) {
-        // Add job to active jobs tracking
-        addJob(result.jobId, url, domain);
-        
-        // Show success message
-        setSuccess(`Archive job created for ${domain}! Track progress below.`);
-        
-        // Don't redirect - let user stay on main page to see job progress
-        // They can click "View" on the job when it's completed to go to domain page
-      } else {
-        setError(archive.error || 'Failed to create archive job');
-      }
-    } catch (error) {
-      console.error('Archive creation error:', error);
-      setError('An unexpected error occurred');
-    } finally {
-      setIsCreating(false);
+    const result = await createArchiveJob(url);
+    if (result) {
+      setSuccess(`Archive job created! Track progress below.`);
+      
+      // Auto-dismiss success message after 5 seconds
+      setTimeout(() => setSuccess(null), 5000);
     }
   };
 
@@ -80,9 +69,10 @@ export default function Home() {
           
           {/* Search Bar - Clean and prominent */}
           <div className="max-w-2xl mx-auto">
-            <SearchBar
+            <EnhancedSearchBar
               onSearch={handleSearch}
-              isLoading={isCreating}
+              isLoading={isLoading}
+              autoFocus={!searchParams.get('q')}
             />
           </div>
           
@@ -162,7 +152,7 @@ export default function Home() {
               </Alert>
               <div className="mt-6 flex justify-center">
                 <button
-                  onClick={() => setError(null)}
+                  onClick={() => {/* Error is managed by enhanced archive hook */}}
                   className="px-6 py-2 text-sm font-medium rounded-lg border transition-all duration-200 hover:scale-105 hover:shadow-md"
                   style={{
                     backgroundColor: 'white',
@@ -177,12 +167,20 @@ export default function Home() {
           </Card>
         )}
 
-        {/* Active Jobs */}
+        {/* Enhanced Active Jobs */}
         <div className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-          <ActiveJobs className="max-w-4xl mx-auto" />
+          <EnhancedActiveJobs className="max-w-4xl mx-auto" maxVisible={8} />
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
 
