@@ -4,13 +4,14 @@
   "description": "Simple Node.js TypeScript backend template",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch backend/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "worker": "tsx src/workers/index.ts",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint \"src/**/*.ts\"",
-    "lint:fix": "eslint \"src/**/*.ts\" --fix"
+    "worker": "tsx backend/workers/index.ts",
+    "format": "prettier --write \"backend/**/*.ts\"",
+    "lint": "eslint \"backend/**/*.ts\"",
+    "lint:fix": "eslint \"backend/**/*.ts\" --fix",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "nodejs",

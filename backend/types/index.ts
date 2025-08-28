@@ -35,3 +35,17 @@ export interface ViewContentRequest {
 export interface ViewErrorResponse {
   error: string;
 }
+
+// Site page suggestions types
+export interface SitePageSuggestionsRequest {
+  domain: string;
+}
+
+export interface SitePageSuggestion {
+  url: string;
+}
+
+export interface SitePageSuggestionsResponse {
+  domain: string;
+  suggestions: SitePageSuggestion[];
+}

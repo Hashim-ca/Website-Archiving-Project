@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import archiveRoutes from './routes/archive';
 import websiteRoutes from './routes/websites';
 import viewRoutes from './routes/view';
+import sitePageSuggestionsRoutes from './routes/site-page-suggestions';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +29,7 @@ app.use(express.json());
 // Routes
 app.use('/api', archiveRoutes);
 app.use('/api', websiteRoutes);
+app.use('/api', sitePageSuggestionsRoutes);
 app.use('/view', viewRoutes);
 
 app.get('/', (_req, res) => {
