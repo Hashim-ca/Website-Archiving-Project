@@ -299,7 +299,7 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
             style={{
               backgroundColor: '#d8d958',
               '--tw-ring-color': '#d8d958'
-            }}
+            } as React.CSSProperties}
             onMouseEnter={(e) => {
               if (!isLoading && url.trim()) {
                 e.currentTarget.style.backgroundColor = '#003738';
