@@ -5,11 +5,22 @@ import { ValidationError } from '../types/errors';
 
 export class ArchiveService {
   /**
-   * Validates a URL string
+   * Validates a URL string and normalizes it if needed
    */
   private validateUrl(urlString: string): URL {
     try {
-      const url = new URL(urlString);
+      // First, try to parse as-is
+      let url: URL;
+      
+      try {
+        url = new URL(urlString);
+      } catch {
+        // If direct parsing fails, try adding https:// protocol
+        const withProtocol = urlString.includes('://') 
+          ? urlString 
+          : `https://${urlString}`;
+        url = new URL(withProtocol);
+      }
 
       // Only allow HTTP and HTTPS protocols
       if (url.protocol !== 'http:' && url.protocol !== 'https:') {

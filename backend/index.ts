@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import archiveRoutes from './routes/archive';
 import websiteRoutes from './routes/websites';
 import viewRoutes from './routes/view';
@@ -23,6 +24,12 @@ async function connectToDatabase(): Promise<void> {
     process.exit(1);
   }
 }
+
+// CORS configuration for frontend development
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3001',
+  credentials: true,
+}));
 
 app.use(express.json());
 
