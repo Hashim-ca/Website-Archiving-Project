@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, RefreshCw, Plus } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Globe, Archive, Lightbulb } from 'lucide-react';
 
 export default function DomainPage() {
   const params = useParams();
@@ -129,10 +129,18 @@ export default function DomainPage() {
       >
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <LoadingSpinner size="lg" />
-              <p className="mt-4 text-lg" style={{ color: '#2B806B' }}>
-                Loading domain information...
+            <div className="text-center animate-fade-in-up">
+              <div className="mb-6">
+                <div className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+                  <Globe className="w-8 h-8" style={{ color: '#2B806B' }} />
+                </div>
+              </div>
+              <LoadingSpinner size="lg" message="" />
+              <p className="mt-4 text-lg font-semibold" style={{ color: '#2B806B' }}>
+                Loading {domain}
+              </p>
+              <p className="mt-2 text-sm" style={{ color: '#7E8381' }}>
+                Fetching archives and page suggestions...
               </p>
             </div>
           </div>
@@ -174,18 +182,39 @@ export default function DomainPage() {
           </div>
 
           {/* Domain Header */}
-          <div className="text-center">
-            <div className="inline-flex items-center space-x-4 px-8 py-4 rounded-lg" style={{ backgroundColor: 'white' }}>
+          <div className="text-center animate-fade-in-up">
+            <div className="inline-flex items-center space-x-6 px-8 py-6 rounded-2xl shadow-lg border-0" style={{ backgroundColor: 'white' }}>
+              <div className="p-3 rounded-xl" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+                <Globe className="w-8 h-8" style={{ color: '#2B806B' }} />
+              </div>
               <div>
-                <h1 className="text-3xl font-bold" style={{ color: '#2B806B' }}>
+                <h1 className="text-3xl font-bold mb-2" style={{ color: '#2B806B' }}>
                   {domain}
                 </h1>
-                <div className="flex items-center justify-center space-x-3 mt-2">
-                  <Badge variant="outline" style={{ borderColor: '#2B806B', color: '#2B806B' }}>
+                <div className="flex items-center justify-center space-x-3">
+                  <Badge 
+                    variant="outline" 
+                    className="px-3 py-1 font-medium"
+                    style={{ 
+                      borderColor: '#2B806B', 
+                      color: '#2B806B',
+                      backgroundColor: 'rgba(43, 128, 107, 0.05)'
+                    }}
+                  >
+                    <Archive className="w-3 h-3 mr-1" />
                     {websiteData ? `${websiteData.snapshots.length} snapshots` : 'No snapshots yet'}
                   </Badge>
                   {activeJob && (
-                    <Badge variant="outline" style={{ borderColor: '#DADA5B', color: '#DADA5B' }}>
+                    <Badge 
+                      variant="outline" 
+                      className="px-3 py-1 font-medium animate-pulse"
+                      style={{ 
+                        borderColor: '#DADA5B', 
+                        color: '#DADA5B',
+                        backgroundColor: 'rgba(218, 218, 91, 0.1)'
+                      }}
+                    >
+                      <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
                       Archive in progress
                     </Badge>
                   )}
@@ -239,49 +268,57 @@ export default function DomainPage() {
           {/* Website Archives */}
           <div className="space-y-6">
             {websiteData ? (
-              <WebsiteResults website={websiteData} />
+              <div className="animate-fade-in-up">
+                <WebsiteResults website={websiteData} />
+              </div>
             ) : (
-              <Card style={{ backgroundColor: 'white' }}>
+              <Card className="shadow-lg border-0 animate-scale-in" style={{ backgroundColor: 'white' }}>
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center space-x-2" style={{ color: '#2B806B' }}>
-                    <span>📂</span>
+                  <CardTitle className="text-lg flex items-center space-x-3" style={{ color: '#2B806B' }}>
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+                      <Archive className="w-5 h-5" />
+                    </div>
                     <span>Domain Archives</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-12">
                     <div className="mb-6">
-                      <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center" style={{ backgroundColor: '#EBEBD3' }}>
-                        <span className="text-3xl">📁</span>
+                      <div className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+                        <Archive className="w-10 h-10" style={{ color: '#2B806B' }} />
                       </div>
                     </div>
-                    <h3 className="text-lg font-semibold mb-3" style={{ color: '#2B806B' }}>
+                    <h3 className="text-xl font-bold mb-3" style={{ color: '#2B806B' }}>
                       No archives yet for {domain}
                     </h3>
-                    <p className="text-sm mb-4" style={{ color: '#7E8381' }}>
+                    <p className="text-sm mb-6 max-w-md mx-auto leading-relaxed" style={{ color: '#7E8381' }}>
                       {activeJob 
-                        ? 'Your archive job is being processed. Check back in a few moments.'
-                        : 'Start by archiving a page from this domain using the search bar above.'
+                        ? 'Your archive job is being processed. The first snapshot will appear here once complete.'
+                        : 'Create your first archive by entering a URL from this domain in the search bar above.'
                       }
                     </p>
                     {activeJob && activeJob.status && (
-                      <div className="mt-4 p-3 rounded-lg" style={{ backgroundColor: '#EBEBD3' }}>
-                        <p className="text-sm font-medium" style={{ color: '#2B806B' }}>
-                          Job Status: {activeJob.status.status}
-                        </p>
+                      <div className="mt-6 p-4 rounded-xl max-w-sm mx-auto" style={{ backgroundColor: 'rgba(218, 218, 91, 0.1)' }}>
+                        <div className="flex items-center justify-center space-x-2 mb-3">
+                          <RefreshCw className="w-4 h-4 animate-spin" style={{ color: '#DADA5B' }} />
+                          <p className="text-sm font-semibold" style={{ color: '#2B806B' }}>
+                            {activeJob.status.status === 'processing' ? 'Processing Archive' : `Status: ${activeJob.status.status}`}
+                          </p>
+                        </div>
                         {activeJob.status.status === 'processing' && (
-                          <div className="mt-2">
-                            <div className="w-full bg-white rounded-full h-2">
+                          <div className="space-y-2">
+                            <div className="w-full bg-white rounded-full h-2 overflow-hidden">
                               <div 
-                                className="h-2 rounded-full transition-all duration-300 animate-pulse"
+                                className="h-2 rounded-full transition-all duration-1000 ease-in-out animate-shimmer"
                                 style={{ 
                                   backgroundColor: '#DADA5B',
-                                  width: '60%'
+                                  width: '70%',
+                                  background: 'linear-gradient(90deg, #DADA5B 0%, rgba(218, 218, 91, 0.7) 50%, #DADA5B 100%)'
                                 }}
                               />
                             </div>
-                            <p className="text-xs mt-1" style={{ color: '#7E8381' }}>
-                              Processing in progress...
+                            <p className="text-xs" style={{ color: '#7E8381' }}>
+                              Capturing page content and assets...
                             </p>
                           </div>
                         )}
@@ -296,31 +333,35 @@ export default function DomainPage() {
           {/* Page Suggestions */}
           <div className="space-y-6">
             {suggestions ? (
-              <RecommendedPages 
-                suggestions={suggestions}
-                onPageArchive={handlePageArchive}
-              />
+              <div className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                <RecommendedPages 
+                  suggestions={suggestions}
+                  onPageArchive={handlePageArchive}
+                />
+              </div>
             ) : (
-              <Card style={{ backgroundColor: 'white' }}>
+              <Card className="shadow-lg border-0 animate-scale-in" style={{ backgroundColor: 'white', animationDelay: '0.1s' }}>
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center space-x-2" style={{ color: '#2B806B' }}>
-                    <span>🔍</span>
+                  <CardTitle className="text-lg flex items-center space-x-3" style={{ color: '#2B806B' }}>
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+                      <Lightbulb className="w-5 h-5" />
+                    </div>
                     <span>Suggested Pages</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-12">
                     <div className="mb-6">
-                      <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center" style={{ backgroundColor: '#EBEBD3' }}>
-                        <span className="text-3xl">🔍</span>
+                      <div className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'rgba(126, 131, 129, 0.1)' }}>
+                        <Lightbulb className="w-10 h-10" style={{ color: '#7E8381' }} />
                       </div>
                     </div>
-                    <h3 className="text-lg font-semibold mb-3" style={{ color: '#2B806B' }}>
-                      No page suggestions found
+                    <h3 className="text-xl font-bold mb-3" style={{ color: '#2B806B' }}>
+                      No suggestions available
                     </h3>
-                    <p className="text-sm" style={{ color: '#7E8381' }}>
-                      We couldn't find additional pages to suggest for {domain}.
-                      Try archiving the main page first to discover more content.
+                    <p className="text-sm max-w-md mx-auto leading-relaxed" style={{ color: '#7E8381' }}>
+                      Page suggestions will appear here after you archive the main page. 
+                      Our system will analyze the site structure to recommend additional content to preserve.
                     </p>
                   </div>
                 </CardContent>
