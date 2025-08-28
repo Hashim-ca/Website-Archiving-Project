@@ -15,38 +15,41 @@ export interface ISnapshot extends Document {
 }
 
 // Mongoose Schema
-const SnapshotSchema = new Schema<ISnapshot>({
-  website: {
-    type: Schema.Types.ObjectId,
-    ref: 'Website',
-    required: true,
-    index: true
+const SnapshotSchema = new Schema<ISnapshot>(
+  {
+    website: {
+      type: Schema.Types.ObjectId,
+      ref: 'Website',
+      required: true,
+      index: true,
+    },
+    status: {
+      type: String,
+      enum: ['processing', 'completed', 'failed'],
+      required: true,
+      default: 'processing',
+    },
+    storagePath: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    entrypoint: {
+      type: String,
+      required: true,
+      trim: true,
+      default: 'index.html',
+    },
+    jobId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Job',
+      required: true,
+    },
   },
-  status: {
-    type: String,
-    enum: ['processing', 'completed', 'failed'],
-    required: true,
-    default: 'processing'
-  },
-  storagePath: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  entrypoint: {
-    type: String,
-    required: true,
-    trim: true,
-    default: 'index.html'
-  },
-  jobId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Job',
-    required: true
+  {
+    timestamps: true, // Automatically adds createdAt and updatedAt
   }
-}, {
-  timestamps: true // Automatically adds createdAt and updatedAt
-});
+);
 
 // Create and export the model
 export const Snapshot = model<ISnapshot>('Snapshot', SnapshotSchema);

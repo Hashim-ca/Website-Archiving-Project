@@ -8,3 +8,19 @@ export interface CreateArchiveResponse {
   jobId: string;
   message: string;
 }
+
+export interface GetWebsiteResponse {
+  domain: string;
+  originalUrl: string;
+  snapshots: {
+    _id: string;
+    status: 'processing' | 'completed' | 'failed';
+    storagePath: string;
+    entrypoint: string;
+    jobId: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+  createdAt: Date;
+  updatedAt: Date;
+}

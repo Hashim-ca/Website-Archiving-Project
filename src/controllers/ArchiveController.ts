@@ -12,7 +12,10 @@ export class ArchiveController {
   /**
    * Handle POST /api/archive requests
    */
-  public createArchive = async (req: Request<{}, CreateArchiveResponse, CreateArchiveRequest>, res: Response<CreateArchiveResponse>): Promise<void> => {
+  public createArchive = async (
+    req: Request<{}, CreateArchiveResponse, CreateArchiveRequest>,
+    res: Response<CreateArchiveResponse>
+  ): Promise<void> => {
     try {
       const { url } = req.body;
 
@@ -20,7 +23,7 @@ export class ArchiveController {
       if (!url || typeof url !== 'string') {
         res.status(400).json({
           jobId: '',
-          message: 'URL is required and must be a string'
+          message: 'URL is required and must be a string',
         });
         return;
       }
@@ -28,7 +31,7 @@ export class ArchiveController {
       if (url.trim() === '') {
         res.status(400).json({
           jobId: '',
-          message: 'URL cannot be empty'
+          message: 'URL cannot be empty',
         });
         return;
       }
@@ -39,16 +42,16 @@ export class ArchiveController {
       // Return success response
       res.status(202).json({
         jobId,
-        message: 'Archiving has been queued.'
+        message: 'Archiving has been queued.',
       });
-
     } catch (error) {
       // Handle validation and other errors
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-      
+      const errorMessage =
+        error instanceof Error ? error.message : 'An unknown error occurred';
+
       res.status(400).json({
         jobId: '',
-        message: errorMessage
+        message: errorMessage,
       });
     }
   };

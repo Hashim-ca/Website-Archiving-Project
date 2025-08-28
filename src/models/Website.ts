@@ -11,26 +11,31 @@ export interface IWebsite extends Document {
 }
 
 // Mongoose Schema
-const WebsiteSchema = new Schema<IWebsite>({
-  domain: {
-    type: String,
-    required: true,
-    unique: true,
-    index: true,
-    trim: true
+const WebsiteSchema = new Schema<IWebsite>(
+  {
+    domain: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+      trim: true,
+    },
+    originalUrl: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    snapshots: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Snapshot',
+      },
+    ],
   },
-  originalUrl: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  snapshots: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Snapshot'
-  }]
-}, {
-  timestamps: true // Automatically adds createdAt and updatedAt
-});
+  {
+    timestamps: true, // Automatically adds createdAt and updatedAt
+  }
+);
 
 // Create and export the model
 export const Website = model<IWebsite>('Website', WebsiteSchema);
