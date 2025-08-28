@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import { config, validateConfig } from './config/environment';
 import archiveRoutes from './routes/archive';
 import websiteRoutes from './routes/websites';
 import viewRoutes from './routes/view';
@@ -14,11 +15,8 @@ const PORT = process.env.PORT || 3000;
 // Connect to MongoDB
 async function connectToDatabase(): Promise<void> {
   try {
-    const mongoUri = process.env.mongo_uri;
-    if (!mongoUri) {
-      throw new Error('mongo_uri environment variable is required');
-    }
-    await mongoose.connect(mongoUri);
+    validateConfig();
+    await mongoose.connect(config.mongodb.uri);
     console.log('Connected to MongoDB');
   } catch (error) {
     console.error('MongoDB connection error:', error);
