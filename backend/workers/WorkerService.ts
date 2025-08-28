@@ -32,7 +32,10 @@ export class WorkerService {
 
     this.intervalId = setInterval(async () => {
       try {
-        await this.processNextJob();
+        const jobId = await this.processNextJob();
+        if (jobId) {
+          console.log(`Worker processed job: ${jobId}`);
+        }
       } catch (error) {
         console.error('Error in worker loop:', error);
       }
@@ -53,10 +56,10 @@ export class WorkerService {
     console.log('Worker stopped');
   }
 
-  private async processNextJob(): Promise<void> {
+  async processNextJob(): Promise<string | null> {
     const job = await this.findAndLockJob();
     if (!job) {
-      return;
+      return null;
     }
 
     console.log(`Processing job ${job._id} for URL: ${job.urlToArchive}`);
@@ -75,6 +78,7 @@ export class WorkerService {
       await this.finalizeSuccess(job, snapshot);
       
       console.log(`Successfully completed job ${job._id}`);
+      return (job._id as Types.ObjectId).toString();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error(`Job ${job._id} failed:`, errorMessage);
@@ -84,6 +88,7 @@ export class WorkerService {
       if (snapshot) {
         await this.cleanupFailedSnapshot((snapshot._id as Types.ObjectId).toString());
       }
+      return (job._id as Types.ObjectId).toString();
     }
   }
 
