@@ -4,6 +4,7 @@ export { useWebsite, useWebsiteQuery } from './useWebsite';
 export { useSitePageSuggestions, useSitePageSuggestionsQuery } from './useSitePageSuggestions';
 export { useViewContent } from './useViewContent';
 export { useJobStatus, useJobStatusQuery } from './useJobStatus';
+export { useActiveJobs } from './useActiveJobs';
 
 // Business logic hooks
 export { useUrlValidation } from './useUrlValidation';
