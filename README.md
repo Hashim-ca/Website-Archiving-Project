@@ -1,5 +1,8 @@
 #<img width="1720" height="1275" alt="Website Archive Project" src="https://github.com/user-attachments/assets/b2014837-acdb-45d7-a71c-b846a17ad984" />
- Website Archiving Project - Backend
+
+https://github.com/user-attachments/assets/f7807c6c-2636-44ab-bcae-417c77a66028
+
+#Website Archiving Project - Backend
 
 This is the backend for the Website Archiving Project. It provides an API and a background worker to capture, store, and serve snapshots of websites.
 
@@ -13,11 +16,8 @@ This is the backend for the Website Archiving Project. It provides an API and a 
 
 ## Getting Started
 
-### 1. Prerequisites
 
-You will need Node.js (v18+), npm/yarn, and access to a MongoDB database.
-
-### 2. Installation
+### 1. Installation
 
 ```bash
 # Clone the repository
@@ -30,7 +30,7 @@ npm install
 
 ### 3. Environment Configuration
 
-Create a `.env` file in the root directory by copying the example below. You must provide your own credentials for the services to work.
+Create a `.env` file in the root directory by copying the example below. 
 
 ```bash
 # .env file
@@ -141,16 +141,6 @@ backend/
 └── index.ts                    # Main application entry point
 ```
 
-## Available Scripts
-
-- **`npm run dev`** - Start the API server in development mode with auto-reload
-- **`npm run worker`** - Start the background worker
-- **`npm run build`** - Build the TypeScript project
-- **`npm start`** - Start the production server (requires build first)
-- **`npm run format`** - Format code with Prettier
-- **`npm run lint`** - Run ESLint
-- **`npm run lint:fix`** - Run ESLint with auto-fix
-- **`npm run typecheck`** - Run TypeScript type checking
 
 ## Development Notes
 
