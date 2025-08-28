@@ -43,12 +43,12 @@ export const useEnhancedArchive = (): UseEnhancedArchiveResult => {
       }
       setError(null);
     },
-    onError: (error: ApiError, variables) => {
+    onError: (apiError: ApiError, variables) => {
       const domain = extractDomain(variables.url);
       if (domain) {
         addToHistory(variables.url, domain, false);
       }
-      setError(error.message || 'Failed to create archive job');
+      setError(apiError.message || 'Failed to create archive job');
     },
     onSettled: () => {
       setIsSearching(false);
@@ -79,7 +79,7 @@ export const useEnhancedArchive = (): UseEnhancedArchiveResult => {
     try {
       const result = await archiveMutation.mutateAsync({ url: url.trim() });
       return result;
-    } catch (error) {
+    } catch {
       // Error is handled in mutation onError
       return null;
     }

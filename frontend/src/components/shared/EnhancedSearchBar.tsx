@@ -39,7 +39,6 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
     setCurrentQuery,
     getRecentSuggestions,
     getDomainSuggestions,
-    addToHistory,
     removeFromHistory,
     history
   } = useSearchStore();
@@ -181,126 +180,125 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
   return (
     <div className={cn('w-full max-w-2xl space-y-2 animate-fade-in-up relative', className)}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="relative">
-          <div className="flex gap-3">
-            <div className="relative flex-1">
-              <Input
-                ref={inputRef}
-                type="text"
-                value={url}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                onFocus={() => setShowSuggestions(true)}
-                placeholder={placeholder}
-                disabled={isLoading}
-                className={cn(
-                  'h-14 text-lg pl-12 pr-4 rounded-xl border-2 transition-all duration-200 focus:scale-[1.02] shadow-sm',
-                  showError ? 'border-red-500 focus-visible:ring-red-500' : 'focus:shadow-lg',
-                  showSuggestions && allSuggestions.length > 0 ? 'rounded-b-none' : ''
-                )}
-                style={{
-                  backgroundColor: 'white',
-                  borderColor: showError ? '#875B4E' : '#7E8381',
-                }}
-              />
-              <Search 
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" 
-                style={{ color: showError ? '#875B4E' : '#7E8381' }} 
-              />
-            </div>
-            <Button
-              type="submit"
-              disabled={isLoading || !url.trim()}
-              className="h-14 px-8 text-lg font-semibold rounded-xl transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-lg flex items-center space-x-2"
-              style={{
-                backgroundColor: '#2B806B',
-                color: 'white',
-              }}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Archiving...</span>
-                </>
-              ) : (
-                <>
-                  <Search className="w-5 h-5" />
-                  <span>Archive</span>
-                </>
+        <div className="flex gap-3">
+          <div className="relative flex-1">
+            <Input
+              ref={inputRef}
+              type="text"
+              value={url}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              onFocus={() => setShowSuggestions(true)}
+              placeholder={placeholder}
+              disabled={isLoading}
+              className={cn(
+                'h-14 text-lg pl-12 pr-4 rounded-xl border-2 transition-all duration-200 focus:scale-[1.02] shadow-sm',
+                showError ? 'border-red-500 focus-visible:ring-red-500' : 'focus:shadow-lg',
+                showSuggestions && allSuggestions.length > 0 ? 'rounded-b-none' : ''
               )}
-            </Button>
-          </div>
-        </div>
-
-        {/* Suggestions dropdown */}
-        {showSuggestions && allSuggestions.length > 0 && (
-          <Card 
-            ref={suggestionsRef}
-            className="absolute top-[70px] left-0 right-0 z-50 shadow-xl border-2 rounded-t-none rounded-b-xl max-h-80 overflow-y-auto"
-            style={{ backgroundColor: 'white', borderColor: '#7E8381' }}
-          >
-            <CardContent className="p-0">
-              {allSuggestions.map((suggestion, index) => (
-                <div
-                  key={`${suggestion.type}-${suggestion.type === 'history' ? suggestion.item.id : suggestion.display}`}
-                  className={cn(
-                    'flex items-center justify-between px-4 py-3 cursor-pointer transition-colors border-b last:border-b-0',
-                    index === selectedIndex ? 'bg-gray-100' : 'hover:bg-gray-50'
-                  )}
-                  style={{ borderColor: '#EBEBD3' }}
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  <div className="flex items-center space-x-3 flex-1">
-                    {suggestion.type === 'history' ? (
-                      <Clock className="w-4 h-4 flex-shrink-0" style={{ color: '#7E8381' }} />
-                    ) : (
-                      <Globe className="w-4 h-4 flex-shrink-0" style={{ color: '#2B806B' }} />
-                    )}
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-2">
-                        <span 
-                          className="font-medium truncate" 
-                          style={{ color: '#2B806B' }}
-                        >
-                          {suggestion.type === 'history' ? suggestion.item.url : suggestion.display}
-                        </span>
-                        {suggestion.type === 'history' && (
-                          <Badge 
-                            variant="outline" 
-                            className="px-2 py-0.5 text-xs"
-                            style={{ 
-                              borderColor: suggestion.item.success ? '#2B806B' : '#875B4E',
-                              color: suggestion.item.success ? '#2B806B' : '#875B4E'
-                            }}
-                          >
-                            {suggestion.item.success ? 'Success' : 'Failed'}
-                          </Badge>
+              style={{
+                backgroundColor: 'white',
+                borderColor: showError ? '#875B4E' : '#7E8381',
+              }}
+            />
+            <Search 
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" 
+              style={{ color: showError ? '#875B4E' : '#7E8381' }} 
+            />
+            
+            {/* Suggestions dropdown - positioned relative to input */}
+            {showSuggestions && allSuggestions.length > 0 && (
+              <Card 
+                ref={suggestionsRef}
+                className="absolute top-full left-0 right-0 z-50 shadow-xl border-2 rounded-t-none rounded-b-xl max-h-80 overflow-y-auto"
+                style={{ backgroundColor: 'white', borderColor: '#7E8381' }}
+              >
+                <CardContent className="p-0">
+                  {allSuggestions.map((suggestion, index) => (
+                    <div
+                      key={`${suggestion.type}-${suggestion.type === 'history' ? suggestion.item.id : suggestion.display}`}
+                      className={cn(
+                        'flex items-center justify-between px-4 py-3 cursor-pointer transition-colors border-b last:border-b-0',
+                        index === selectedIndex ? 'bg-gray-100' : 'hover:bg-gray-50'
+                      )}
+                      style={{ borderColor: '#EBEBD3' }}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      <div className="flex items-center space-x-3 flex-1 min-w-0">
+                        {suggestion.type === 'history' ? (
+                          <Clock className="w-4 h-4 flex-shrink-0" style={{ color: '#7E8381' }} />
+                        ) : (
+                          <Globe className="w-4 h-4 flex-shrink-0" style={{ color: '#2B806B' }} />
                         )}
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <span 
+                              className="font-medium truncate text-sm" 
+                              style={{ color: '#2B806B' }}
+                              title={suggestion.type === 'history' ? suggestion.item.url : suggestion.display}
+                            >
+                              {suggestion.type === 'history' ? suggestion.item.url : suggestion.display}
+                            </span>
+                            {suggestion.type === 'history' && (
+                              <Badge 
+                                variant="outline" 
+                                className="px-1.5 py-0.5 text-xs flex-shrink-0"
+                                style={{ 
+                                  borderColor: suggestion.item.success ? '#2B806B' : '#875B4E',
+                                  color: suggestion.item.success ? '#2B806B' : '#875B4E'
+                                }}
+                              >
+                                {suggestion.item.success ? 'Success' : 'Failed'}
+                              </Badge>
+                            )}
+                          </div>
+                          {suggestion.type === 'history' && (
+                            <p className="text-xs truncate" style={{ color: '#7E8381' }}>
+                              {suggestion.item.domain} • {new Date(suggestion.item.timestamp).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
                       </div>
+                      
                       {suggestion.type === 'history' && (
-                        <p className="text-sm truncate" style={{ color: '#7E8381' }}>
-                          {suggestion.item.domain} • {new Date(suggestion.item.timestamp).toLocaleDateString()}
-                        </p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-6 h-6 p-0 hover:bg-red-50 flex-shrink-0 ml-2"
+                          onClick={(e) => handleRemoveSuggestion(e, suggestion.item.id)}
+                        >
+                          <X className="w-3 h-3" style={{ color: '#875B4E' }} />
+                        </Button>
                       )}
                     </div>
-                  </div>
-                  
-                  {suggestion.type === 'history' && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-6 h-6 p-0 hover:bg-red-50"
-                      onClick={(e) => handleRemoveSuggestion(e, suggestion.item.id)}
-                    >
-                      <X className="w-3 h-3" style={{ color: '#875B4E' }} />
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
+                  ))}
+                </CardContent>
+              </Card>
+            )}
+          </div>
+          <Button
+            type="submit"
+            disabled={isLoading || !url.trim()}
+            className="h-14 px-8 text-lg font-semibold rounded-xl transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-lg flex items-center space-x-2"
+            style={{
+              backgroundColor: '#2B806B',
+              color: 'white',
+            }}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>Archiving...</span>
+              </>
+            ) : (
+              <>
+                <Search className="w-5 h-5" />
+                <span>Archive</span>
+              </>
+            )}
+          </Button>
+        </div>
         
         {showError && validation.errors.length > 0 && (
           <Alert 

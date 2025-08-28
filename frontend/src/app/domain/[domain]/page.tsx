@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { SearchBar, WebsiteResults, RecommendedPages, LoadingSpinner } from '@/components/shared';
-import { useWebsiteQuery, useSitePageSuggestionsQuery, useUrlValidation, useArchive, useActiveJobs } from '@/hooks';
-import { GetWebsiteResponse, SitePageSuggestionsResponse } from '@/types';
+import { EnhancedSearchBar, WebsiteResults, RecommendedPages, LoadingSpinner } from '@/components/shared';
+import { useSitePageSuggestionsQuery, useUrlValidation } from '@/hooks';
+import { useEnhancedArchive, useEnhancedWebsite } from '@/hooks';
+import { useJobStore } from '@/stores/jobStore';
+import { SitePageSuggestionsResponse } from '@/types';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,30 +19,29 @@ export default function DomainPage() {
   const router = useRouter();
   const domain = decodeURIComponent(params.domain as string);
   
-  const [websiteData, setWebsiteData] = useState<GetWebsiteResponse | null>(null);
+  // Remove unused local websiteData state - using enhancedWebsiteData directly
   const [suggestions, setSuggestions] = useState<SitePageSuggestionsResponse | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   const { extractDomain } = useUrlValidation();
-  const websiteQuery = useWebsiteQuery();
+  const { data: enhancedWebsiteData, isLoading: isWebsiteLoading, refetch: refetchWebsite } = useEnhancedWebsite({ domain });
   const suggestionsQuery = useSitePageSuggestionsQuery();
-  const archive = useArchive();
-  const { addJob, activeJobs } = useActiveJobs();
+  const { createArchiveJob, isLoading: isArchiveLoading, error: archiveError } = useEnhancedArchive();
+  const { getJobsByDomain } = useJobStore();
 
-  // Find active job for this domain
-  const activeJob = activeJobs.find(job => job.domain === domain);
+  // Find jobs for this domain
+  const domainJobs = getJobsByDomain(domain);
+  const activeJob = domainJobs.find(job => {
+    if (!job.status) return true;
+    const status = job.status.status;
+    return status === 'pending' || status === 'processing';
+  });
   
   // Define refresh function
   const handleRefresh = async () => {
-    const [websiteResult, suggestionsResult] = await Promise.all([
-      websiteQuery.queryWebsite(domain),
-      suggestionsQuery.querySuggestions(domain)
-    ]);
-
-    if (websiteResult) {
-      setWebsiteData(websiteResult);
-    }
+    const suggestionsResult = await suggestionsQuery.querySuggestions(domain);
+    refetchWebsite();
 
     if (suggestionsResult) {
       setSuggestions(suggestionsResult);
@@ -63,6 +64,8 @@ export default function DomainPage() {
     }
   }, [activeJob?.status?.status]); // Only depend on status changes
 
+  // No longer need to sync - using enhancedWebsiteData directly
+
   // Load initial data
   useEffect(() => {
     const loadData = async () => {
@@ -70,14 +73,8 @@ export default function DomainPage() {
       setError(null);
 
       try {
-        const [websiteResult, suggestionsResult] = await Promise.all([
-          websiteQuery.queryWebsite(domain),
-          suggestionsQuery.querySuggestions(domain)
-        ]);
-
-        if (websiteResult) {
-          setWebsiteData(websiteResult);
-        }
+        const suggestionsResult = await suggestionsQuery.querySuggestions(domain);
+        // Website data is automatically loaded by useEnhancedWebsite
 
         if (suggestionsResult) {
           setSuggestions(suggestionsResult);
@@ -104,13 +101,11 @@ export default function DomainPage() {
     }
 
     try {
-      const result = await archive.createArchiveJob(url);
-      if (result) {
-        addJob(result.jobId, url, domain);
-        // No need to refresh immediately - active jobs will track progress
-      } else {
-        setError(archive.error || 'Failed to create archive job');
+      const result = await createArchiveJob(url);
+      if (!result && archiveError) {
+        setError(archiveError);
       }
+      // Job tracking is handled by enhanced hooks and stores
     } catch (error) {
       console.error('Archive creation error:', error);
       setError('Failed to create archive job');
@@ -172,11 +167,11 @@ export default function DomainPage() {
             <Button
               variant="outline"
               onClick={handleRefresh}
-              disabled={websiteQuery.isLoading || suggestionsQuery.isLoading}
+              disabled={isWebsiteLoading || suggestionsQuery.isLoading}
               className="flex items-center space-x-2"
               style={{ borderColor: '#2B806B', color: '#2B806B' }}
             >
-              <RefreshCw className={`w-4 h-4 ${(websiteQuery.isLoading || suggestionsQuery.isLoading) ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${(isWebsiteLoading || suggestionsQuery.isLoading) ? 'animate-spin' : ''}`} />
               <span>Refresh</span>
             </Button>
           </div>
@@ -202,7 +197,7 @@ export default function DomainPage() {
                     }}
                   >
                     <Archive className="w-3 h-3 mr-1" />
-                    {websiteData ? `${websiteData.snapshots.length} snapshots` : 'No snapshots yet'}
+                    {enhancedWebsiteData ? `${enhancedWebsiteData.snapshots.length} snapshots` : 'No snapshots yet'}
                   </Badge>
                   {activeJob && (
                     <Badge 
@@ -227,9 +222,9 @@ export default function DomainPage() {
           <div className="max-w-2xl mx-auto mt-6">
             <div className="flex items-center space-x-2">
               <div className="flex-1">
-                <SearchBar
+                <EnhancedSearchBar
                   onSearch={handleNewArchive}
-                  isLoading={archive.isLoading}
+                  isLoading={isArchiveLoading}
                   placeholder={`Archive another page from ${domain}...`}
                 />
               </div>
@@ -267,9 +262,9 @@ export default function DomainPage() {
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Website Archives */}
           <div className="space-y-6">
-            {websiteData ? (
+            {enhancedWebsiteData ? (
               <div className="animate-fade-in-up">
-                <WebsiteResults website={websiteData} />
+                <WebsiteResults website={enhancedWebsiteData} />
               </div>
             ) : (
               <Card className="shadow-lg border-0 animate-scale-in" style={{ backgroundColor: 'white' }}>

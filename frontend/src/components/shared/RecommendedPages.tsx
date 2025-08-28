@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { SitePageSuggestionsResponse } from '@/types';
-import { useArchive } from '@/hooks';
+import { useEnhancedArchive } from '@/hooks';
 import { truncateText } from '@/utils';
 import { cn } from '@/lib/utils';
 
@@ -18,7 +18,7 @@ export const RecommendedPages: React.FC<RecommendedPagesProps> = ({
   onPageArchive,
   className
 }) => {
-  const { createArchiveJob, isLoading: isArchiving } = useArchive();
+  const { createArchiveJob, isLoading: isArchiving } = useEnhancedArchive();
 
   const handleArchivePage = async (url: string) => {
     const result = await createArchiveJob(url);

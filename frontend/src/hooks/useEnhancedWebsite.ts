@@ -1,7 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getWebsite } from '@/lib/api';
 import { queryKeys } from '@/lib/queryClient';
-import { GetWebsiteResponse } from '@/types';
 
 interface UseEnhancedWebsiteOptions {
   domain?: string;

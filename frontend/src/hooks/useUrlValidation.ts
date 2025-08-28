@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { ValidationResult, FormError } from '@/types';
+import { normalizeUrl, extractDomain, isValidDomain } from '@/utils';
 
 interface UseUrlValidationResult {
   validateUrl: (url: string) => ValidationResult;
@@ -20,10 +21,9 @@ export const useUrlValidation = (): UseUrlValidationResult => {
       return { isValid: false, errors };
     }
 
-    const trimmedUrl = url.trim();
-
     try {
-      const urlObj = new URL(trimmedUrl.startsWith('http') ? trimmedUrl : `https://${trimmedUrl}`);
+      const normalized = normalizeUrl(url);
+      const urlObj = new URL(normalized);
       
       // Only allow HTTP and HTTPS protocols
       if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
@@ -33,17 +33,8 @@ export const useUrlValidation = (): UseUrlValidationResult => {
         });
       }
 
-      // Basic hostname validation
-      if (!urlObj.hostname || urlObj.hostname.length === 0) {
-        errors.push({
-          field: 'url',
-          message: 'Invalid hostname',
-        });
-      }
-
-      // Check for valid domain format (basic validation)
-      const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$/;
-      if (!domainRegex.test(urlObj.hostname)) {
+      // Use utility function for domain validation
+      if (!urlObj.hostname || !isValidDomain(urlObj.hostname)) {
         errors.push({
           field: 'url',
           message: 'Invalid domain format',
@@ -67,28 +58,7 @@ export const useUrlValidation = (): UseUrlValidationResult => {
     return validateUrl(url).isValid;
   }, [validateUrl]);
 
-  const normalizeUrl = useCallback((url: string): string => {
-    try {
-      const trimmedUrl = url.trim();
-      const fullUrl = trimmedUrl.startsWith('http') ? trimmedUrl : `https://${trimmedUrl}`;
-      const urlObj = new URL(fullUrl);
-      return urlObj.toString();
-    } catch {
-      return url; // Return original if normalization fails
-    }
-  }, []);
-
-  const extractDomain = useCallback((url: string): string | null => {
-    try {
-      const trimmedUrl = url.trim();
-      const fullUrl = trimmedUrl.startsWith('http') ? trimmedUrl : `https://${trimmedUrl}`;
-      const urlObj = new URL(fullUrl);
-      return urlObj.hostname;
-    } catch {
-      return null;
-    }
-  }, []);
-
+  // Use utility functions directly - no need to wrap in useCallback
   return {
     validateUrl,
     isValidUrl,
