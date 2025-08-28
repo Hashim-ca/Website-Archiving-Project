@@ -24,3 +24,13 @@ export interface GetWebsiteResponse {
   createdAt: Date;
   updatedAt: Date;
 }
+
+// View service types
+export interface ViewContentRequest {
+  snapshotId: string;
+  filePath?: string;
+}
+
+export interface ViewErrorResponse {
+  error: string;
+}
