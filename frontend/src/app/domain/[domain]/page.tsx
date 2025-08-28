@@ -120,7 +120,7 @@ export default function DomainPage() {
     return (
       <div 
         className="min-h-screen p-6"
-        style={{ backgroundColor: '#F8F6F0' }}
+        style={{ backgroundColor: '#eeefd3' }}
       >
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center min-h-[400px]">
@@ -147,7 +147,7 @@ export default function DomainPage() {
   return (
     <div 
       className="min-h-screen p-6"
-      style={{ backgroundColor: '#F8F6F0' }}
+      style={{ backgroundColor: '#eeefd3' }}
     >
       <div className="max-w-7xl mx-auto">
         {/* Header with navigation */}

@@ -29,7 +29,7 @@ export const RecommendedPages: React.FC<RecommendedPagesProps> = ({
 
   if (suggestions.suggestions.length === 0) {
     return (
-      <Card className={cn('w-full', className)} style={{ backgroundColor: '#F8F6F0' }}>
+      <Card className={cn('w-full', className)} style={{ backgroundColor: '#eeefd3' }}>
         <CardContent className="pt-6">
           <Alert>
             <AlertDescription style={{ color: '#5A5A5A' }}>
@@ -59,7 +59,7 @@ export const RecommendedPages: React.FC<RecommendedPagesProps> = ({
               key={`${suggestion.url}-${index}`}
               className="flex items-center justify-between p-5 border rounded-xl shadow-sm transition-all duration-200 hover:shadow-md"
               style={{ 
-                backgroundColor: '#F8F6F0',
+                backgroundColor: '#eeefd3',
                 borderColor: '#5A5A5A'
               }}
             >

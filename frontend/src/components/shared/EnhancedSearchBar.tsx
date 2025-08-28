@@ -178,9 +178,9 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
   }, []);
 
   return (
-    <div className={cn('w-full max-w-2xl space-y-2 animate-fade-in-up relative', className)}>
+    <div className={cn('w-full max-w-2xl space-y-3 animate-fade-in-up relative', className)}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="relative flex-1">
             <Input
               ref={inputRef}
@@ -192,50 +192,56 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
               placeholder={placeholder}
               disabled={isLoading}
               className={cn(
-                'h-16 text-lg pl-14 pr-4 rounded-2xl border-2 transition-all duration-200 focus:scale-[1.01] shadow-sm font-medium',
-                showError ? 'border-red-500 focus-visible:ring-red-500' : 'focus:shadow-lg',
-                showSuggestions && allSuggestions.length > 0 ? 'rounded-b-none' : ''
+                'h-14 sm:h-16 text-base sm:text-lg pl-12 sm:pl-14 pr-4 sm:pr-6 rounded-2xl border-2 transition-all duration-300 ease-in-out font-medium',
+                'bg-white hover:shadow-md focus:shadow-lg focus:scale-[1.01]',
+                'placeholder:text-gray-400',
+                showError 
+                  ? 'border-red-400 focus-visible:ring-red-200 focus-visible:ring-4 focus-visible:border-red-500' 
+                  : 'border-gray-300 hover:border-gray-400',
+                'focus-visible:ring-4 focus-visible:ring-opacity-30',
+                !showError && 'focus-visible:border-[#d8d958] focus-visible:ring-[#d8d958]',
+                showSuggestions && allSuggestions.length > 0 ? 'rounded-b-none border-b-0' : '',
+                isLoading ? 'opacity-75' : ''
               )}
-              style={{
-                backgroundColor: 'white',
-                borderColor: showError ? '#B85450' : '#5A5A5A',
-              }}
             />
             <Search 
-              className="absolute left-5 top-1/2 transform -translate-y-1/2 w-6 h-6" 
-              style={{ color: showError ? '#B85450' : '#5A5A5A' }} 
+              className={cn(
+                "absolute left-3 sm:left-5 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 transition-colors duration-200",
+                showError ? 'text-red-400' : 'text-gray-400'
+              )}
             />
             
             {/* Suggestions dropdown - positioned relative to input */}
             {showSuggestions && allSuggestions.length > 0 && (
               <Card 
                 ref={suggestionsRef}
-                className="absolute top-full left-0 right-0 z-50 shadow-xl border-2 rounded-t-none rounded-b-2xl max-h-80 overflow-y-auto"
-                style={{ backgroundColor: 'white', borderColor: '#5A5A5A' }}
+                className={cn(
+                  "absolute top-full left-0 right-0 z-50 shadow-xl border-2 rounded-t-none rounded-b-2xl max-h-80 overflow-y-auto",
+                  "bg-white backdrop-blur-sm",
+                  showError ? 'border-red-400' : 'border-[#d8d958]'
+                )}
               >
                 <CardContent className="p-0">
                   {allSuggestions.map((suggestion, index) => (
                     <div
                       key={`${suggestion.type}-${suggestion.type === 'history' ? suggestion.item.id : suggestion.display}`}
                       className={cn(
-                        'flex items-center justify-between px-5 py-4 cursor-pointer transition-all duration-150 border-b last:border-b-0',
-                        index === selectedIndex ? 'bg-gray-100' : 'hover:bg-gray-50'
+                        'flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 cursor-pointer transition-all duration-200 border-b last:border-b-0',
+                        index === selectedIndex ? 'bg-blue-50 border-blue-100' : 'hover:bg-gray-50 border-gray-100'
                       )}
-                      style={{ borderColor: '#F8F6F0' }}
                       onClick={() => handleSuggestionClick(suggestion)}
                     >
                       <div className="flex items-center space-x-3 flex-1 min-w-0">
                         {suggestion.type === 'history' ? (
-                          <Clock className="w-4 h-4 flex-shrink-0" style={{ color: '#5A5A5A' }} />
+                          <Clock className="w-4 h-4 flex-shrink-0 text-gray-500" />
                         ) : (
-                          <Globe className="w-4 h-4 flex-shrink-0" style={{ color: '#1B4D3E' }} />
+                          <Globe className="w-4 h-4 flex-shrink-0 text-blue-600" />
                         )}
                         
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-2 mb-1">
                             <span 
-                              className="font-semibold truncate text-sm" 
-                              style={{ color: '#1B4D3E' }}
+                              className="font-semibold truncate text-sm text-gray-900" 
                               title={suggestion.type === 'history' ? suggestion.item.url : suggestion.display}
                             >
                               {suggestion.type === 'history' ? suggestion.item.url : suggestion.display}
@@ -243,18 +249,19 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
                             {suggestion.type === 'history' && (
                               <Badge 
                                 variant="outline" 
-                                className="px-1.5 py-0.5 text-xs flex-shrink-0"
-                                style={{ 
-                                  borderColor: suggestion.item.success ? '#1B4D3E' : '#B85450',
-                                  color: suggestion.item.success ? '#1B4D3E' : '#B85450'
-                                }}
+                                className={cn(
+                                  "px-1.5 py-0.5 text-xs flex-shrink-0 border",
+                                  suggestion.item.success 
+                                    ? 'border-green-200 text-green-700 bg-green-50' 
+                                    : 'border-red-200 text-red-700 bg-red-50'
+                                )}
                               >
                                 {suggestion.item.success ? 'Success' : 'Failed'}
                               </Badge>
                             )}
                           </div>
                           {suggestion.type === 'history' && (
-                            <p className="text-xs truncate" style={{ color: '#5A5A5A' }}>
+                            <p className="text-xs truncate text-gray-500">
                               {suggestion.item.domain} • {new Date(suggestion.item.timestamp).toLocaleDateString()}
                             </p>
                           )}
@@ -265,10 +272,10 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="w-6 h-6 p-0 hover:bg-red-50 flex-shrink-0 ml-2"
+                          className="w-6 h-6 p-0 hover:bg-red-50 hover:text-red-600 flex-shrink-0 ml-2 rounded-full transition-colors duration-200"
                           onClick={(e) => handleRemoveSuggestion(e, suggestion.item.id)}
                         >
-                          <X className="w-3 h-3" style={{ color: '#B85450' }} />
+                          <X className="w-3 h-3 text-gray-400 hover:text-red-500" />
                         </Button>
                       )}
                     </div>
@@ -280,21 +287,46 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
           <Button
             type="submit"
             disabled={isLoading || !url.trim()}
-            className="h-16 px-10 text-lg font-bold rounded-2xl transition-all duration-200 hover:scale-[1.02] shadow-md hover:shadow-lg flex items-center space-x-3"
+            className={cn(
+              "h-14 sm:h-16 px-8 sm:px-12 text-base sm:text-lg font-bold rounded-2xl transition-all duration-300 ease-in-out",
+              "shadow-md hover:shadow-lg focus:shadow-lg",
+              "flex items-center justify-center space-x-2 sm:space-x-3",
+              "text-green-900 hover:text-green-800",
+              "disabled:opacity-60 disabled:cursor-not-allowed",
+              "focus:ring-4 focus:ring-opacity-30",
+              "w-full sm:w-44 min-w-[140px]"
+            )}
             style={{
-              backgroundColor: '#D4B942',
-              color: '#1B4D3E',
-              fontWeight: '700'
+              backgroundColor: '#d8d958',
+              '--tw-ring-color': '#d8d958'
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading && url.trim()) {
+                e.currentTarget.style.backgroundColor = '#003738';
+                e.currentTarget.style.color = '#ffffff';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#d8d958';
+              e.currentTarget.style.color = '';
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.backgroundColor = '#003738';
+              e.currentTarget.style.color = '#ffffff';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.backgroundColor = '#d8d958';
+              e.currentTarget.style.color = '';
             }}
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-6 h-6 animate-spin" />
+                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                 <span>Archiving...</span>
               </>
             ) : (
               <>
-                <Search className="w-6 h-6" />
+                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Archive</span>
               </>
             )}
@@ -303,15 +335,14 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
         
         {showError && validation.errors.length > 0 && (
           <Alert 
-            className="border-2 rounded-xl animate-scale-in shadow-sm"
-            style={{ 
-              backgroundColor: 'rgba(135, 91, 78, 0.05)', 
-              borderColor: '#B85450' 
-            }}
+            className={cn(
+              "border-2 rounded-xl animate-scale-in shadow-sm",
+              "bg-red-50 border-red-200"
+            )}
           >
             <div className="flex items-start space-x-3">
-              <AlertTriangle className="w-5 h-5 mt-0.5" style={{ color: '#B85450' }} />
-              <AlertDescription className="font-medium" style={{ color: '#B85450' }}>
+              <AlertTriangle className="w-5 h-5 mt-0.5 text-red-500" />
+              <AlertDescription className="font-medium text-red-700">
                 {validation.errors[0].message}
               </AlertDescription>
             </div>

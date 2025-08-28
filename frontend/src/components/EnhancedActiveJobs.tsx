@@ -228,7 +228,7 @@ export const EnhancedActiveJobs: React.FC<EnhancedActiveJobsProps> = ({
               className="group relative flex items-start justify-between p-5 rounded-xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus-within:ring-2 focus-within:ring-offset-2"
               style={{ 
                 backgroundColor: 'rgba(43, 128, 107, 0.02)',
-                borderColor: '#F8F6F0',
+                borderColor: '#eeefd3',
                 boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
               }}
             >

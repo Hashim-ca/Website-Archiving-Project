@@ -43,7 +43,7 @@ function HomeContent() {
   return (
     <div 
       className="min-h-screen p-6"
-      style={{ backgroundColor: '#F8F6F0' }}
+      style={{ backgroundColor: '#eeefd3' }}
     >
       <div className="max-w-4xl mx-auto">
         {/* Header */}
