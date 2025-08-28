@@ -3,6 +3,7 @@ import { IWebsite } from './Website';
 
 // TypeScript Interface
 export interface IJob extends Document {
+  _id: Types.ObjectId;
   urlToArchive: string;
   website: Types.ObjectId | IWebsite;
   status: 'pending' | 'processing' | 'completed' | 'failed';

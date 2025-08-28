@@ -69,6 +69,6 @@ export class ArchiveService {
 
     await job.save();
 
-    return (job._id as string).toString();
+    return job._id.toString();
   }
 }
