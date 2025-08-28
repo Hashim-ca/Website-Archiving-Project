@@ -31,6 +31,7 @@ export const ActiveJobs: React.FC<ActiveJobsProps> = ({ className }) => {
     return null;
   }
 
+  // Jobs are now added at the beginning of array, so they're already in correct order (most recent first)
   const completedJobs = activeJobs.filter(job => 
     job.status && (job.status.status === 'completed' || job.status.status === 'failed')
   );
@@ -78,8 +79,22 @@ export const ActiveJobs: React.FC<ActiveJobsProps> = ({ className }) => {
         <CardContent className="space-y-4">
           {processingJobs.length > 0 && (
             <div className="space-y-3">
-              {processingJobs.map((job) => (
-                <JobItem key={job.jobId} job={job} onRemove={removeJob} />
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-2">
+                  <Play className="w-4 h-4" style={{ color: '#DADA5B' }} />
+                  <p className="text-sm font-medium" style={{ color: '#2B806B' }}>
+                    Active Jobs ({processingJobs.length})
+                  </p>
+                </div>
+              </div>
+              {processingJobs.map((job, index) => (
+                <div 
+                  key={job.jobId} 
+                  className="animate-fade-in-up" 
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <JobItem job={job} onRemove={removeJob} />
+                </div>
               ))}
             </div>
           )}
@@ -87,20 +102,35 @@ export const ActiveJobs: React.FC<ActiveJobsProps> = ({ className }) => {
           {completedJobs.length > 0 && (
             <>
               {processingJobs.length > 0 && (
-                <div className="border-t pt-4" style={{ borderColor: '#EBEBD3' }} />
+                <div className="border-t pt-4 mt-4" style={{ borderColor: '#EBEBD3' }} />
               )}
               <div>
-                <div className="flex items-center space-x-2 mb-3">
-                  <CheckCircle className="w-4 h-4" style={{ color: '#2B806B' }} />
-                  <p className="text-sm font-medium" style={{ color: '#7E8381' }}>
-                    Recently Completed ({completedJobs.length})
-                  </p>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4" style={{ color: '#2B806B' }} />
+                    <p className="text-sm font-medium" style={{ color: '#2B806B' }}>
+                      Recently Completed ({completedJobs.length})
+                    </p>
+                  </div>
                 </div>
                 <div className="space-y-3">
-                  {completedJobs.slice(0, 3).map((job) => (
-                    <JobItem key={job.jobId} job={job} onRemove={removeJob} />
+                  {completedJobs.slice(0, 5).map((job, index) => (
+                    <div 
+                      key={job.jobId} 
+                      className="animate-fade-in-up" 
+                      style={{ animationDelay: `${(processingJobs.length + index) * 50}ms` }}
+                    >
+                      <JobItem job={job} onRemove={removeJob} />
+                    </div>
                   ))}
                 </div>
+                {completedJobs.length > 5 && (
+                  <div className="text-center mt-3 p-2 rounded-lg" style={{ backgroundColor: 'rgba(126, 131, 129, 0.05)' }}>
+                    <p className="text-xs font-medium" style={{ color: '#7E8381' }}>
+                      {completedJobs.length - 5} more completed jobs available
+                    </p>
+                  </div>
+                )}
               </div>
             </>
           )}

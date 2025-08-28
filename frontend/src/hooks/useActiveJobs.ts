@@ -137,7 +137,7 @@ export const useActiveJobs = (): UseActiveJobsResult => {
         error: null
       };
 
-      const updatedJobs = [...prevJobs, newJob];
+      const updatedJobs = [newJob, ...prevJobs];
       saveToStorage(updatedJobs);
       return updatedJobs;
     });

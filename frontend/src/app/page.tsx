@@ -1,18 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+
 import { SearchBar, ActiveJobs } from '@/components/shared';
 import { useArchive, useUrlValidation, useActiveJobs } from '@/hooks';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
-import { Archive, AlertTriangle } from 'lucide-react';
+import { Archive, AlertTriangle, CheckCircle } from 'lucide-react';
 
 export default function Home() {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   
-  const router = useRouter();
   const { extractDomain } = useUrlValidation();
   const archive = useArchive();
   const { addJob } = useActiveJobs();
@@ -26,6 +26,7 @@ export default function Home() {
 
     setIsCreating(true);
     setError(null);
+    setSuccess(null);
 
     try {
       // Create archive job
@@ -34,8 +35,11 @@ export default function Home() {
         // Add job to active jobs tracking
         addJob(result.jobId, url, domain);
         
-        // Navigate to domain page to show details
-        router.push(`/domain/${encodeURIComponent(domain)}`);
+        // Show success message
+        setSuccess(`Archive job created for ${domain}! Track progress below.`);
+        
+        // Don't redirect - let user stay on main page to see job progress
+        // They can click "View" on the job when it's completed to go to domain page
       } else {
         setError(archive.error || 'Failed to create archive job');
       }
@@ -98,6 +102,43 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Success Display */}
+        {success && (
+          <Card 
+            className="max-w-2xl mx-auto mb-8 border-2 shadow-lg animate-scale-in" 
+            style={{ backgroundColor: 'white', borderColor: '#2B806B' }}
+          >
+            <CardContent className="pt-6">
+              <Alert style={{ backgroundColor: 'transparent', border: 'none', padding: 0 }}>
+                <div className="flex items-start space-x-3">
+                  <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+                    <CheckCircle className="w-5 h-5" style={{ color: '#2B806B' }} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold mb-1" style={{ color: '#2B806B' }}>Archive Started</h3>
+                    <AlertDescription className="leading-relaxed" style={{ color: '#2B806B' }}>
+                      {success}
+                    </AlertDescription>
+                  </div>
+                </div>
+              </Alert>
+              <div className="mt-6 flex justify-center">
+                <button
+                  onClick={() => setSuccess(null)}
+                  className="px-6 py-2 text-sm font-medium rounded-lg border transition-all duration-200 hover:scale-105 hover:shadow-md"
+                  style={{
+                    backgroundColor: 'white',
+                    borderColor: '#2B806B',
+                    color: '#2B806B'
+                  }}
+                >
+                  Dismiss
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Error Display */}
         {error && (

@@ -21,7 +21,7 @@ export const useJobStatus = (options: UseJobStatusOptions = {}): UseJobStatusRes
   const { 
     jobId, 
     autoFetch = false, 
-    pollingInterval = 2000, // 2 seconds default
+    pollingInterval = 5000, // 5 seconds default
     stopPollingOnComplete = true 
   } = options;
 

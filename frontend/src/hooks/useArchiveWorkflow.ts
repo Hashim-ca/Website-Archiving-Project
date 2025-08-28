@@ -51,7 +51,7 @@ export const useArchiveWorkflow = (): UseArchiveWorkflowResult => {
   const archive = useArchive();
   const jobStatusHook = useJobStatus({
     stopPollingOnComplete: true,
-    pollingInterval: 2000, // Poll every 2 seconds
+    pollingInterval: 5000, // Poll every 5 seconds
   });
   const websiteQuery = useWebsiteQuery();
 
