@@ -1,6 +1,7 @@
 import { URL } from 'url';
 import { Website, IWebsite } from '../models/Website';
-import { Job, IJob } from '../models/Job';
+import { Job } from '../models/Job';
+import { ValidationError } from '../types/errors';
 
 export class ArchiveService {
   /**
@@ -12,12 +13,15 @@ export class ArchiveService {
 
       // Only allow HTTP and HTTPS protocols
       if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-        throw new Error('Only HTTP and HTTPS URLs are allowed');
+        throw new ValidationError('Only HTTP and HTTPS URLs are allowed');
       }
 
       return url;
     } catch (error) {
-      throw new Error(
+      if (error instanceof ValidationError) {
+        throw error;
+      }
+      throw new ValidationError(
         `Invalid URL: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }

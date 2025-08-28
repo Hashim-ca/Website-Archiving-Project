@@ -21,7 +21,12 @@ export class ViewController {
       const { snapshotId } = req.params;
       // Extract the wildcard path from the URL
       const wildcardIndex = req.url.indexOf('/', req.url.indexOf(snapshotId) + snapshotId.length);
-      const filePath = wildcardIndex !== -1 ? req.url.substring(wildcardIndex + 1) : 'index.html';
+      let filePath = wildcardIndex !== -1 ? req.url.substring(wildcardIndex + 1) : 'index.html';
+      
+      // Default to index.html if path is empty or just a slash
+      if (!filePath || filePath === '' || filePath === '/') {
+        filePath = 'index.html';
+      }
 
       // Validate snapshotId is a valid ObjectId
       if (!Types.ObjectId.isValid(snapshotId)) {

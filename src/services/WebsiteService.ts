@@ -1,5 +1,12 @@
-import { Website } from '../models/Website';
+import { Types } from 'mongoose';
+import { Website, IWebsite } from '../models/Website';
+import { ISnapshot } from '../models/Snapshot';
 import { GetWebsiteResponse } from '../types';
+import { ArchiveError } from '../types/errors';
+
+interface IWebsiteWithPopulatedSnapshots extends Omit<IWebsite, 'snapshots'> {
+  snapshots: ISnapshot[];
+}
 
 export class WebsiteService {
   /**
@@ -12,22 +19,22 @@ export class WebsiteService {
       // Find website by domain and populate snapshots
       const website = await Website.findOne({ domain })
         .populate('snapshots')
-        .exec();
+        .exec() as IWebsiteWithPopulatedSnapshots | null;
 
       if (!website) {
         return null;
       }
 
-      // Transform to response format
+      // Transform to response format - no type assertions needed
       const response: GetWebsiteResponse = {
         domain: website.domain,
         originalUrl: website.originalUrl,
-        snapshots: website.snapshots.map((snapshot: any) => ({
-          _id: snapshot._id.toString(),
+        snapshots: website.snapshots.map((snapshot) => ({
+          _id: (snapshot._id as Types.ObjectId).toString(),
           status: snapshot.status,
           storagePath: snapshot.storagePath,
           entrypoint: snapshot.entrypoint,
-          jobId: snapshot.jobId.toString(),
+          jobId: (snapshot.jobId as Types.ObjectId).toString(),
           createdAt: snapshot.createdAt,
           updatedAt: snapshot.updatedAt,
         })),
@@ -37,7 +44,7 @@ export class WebsiteService {
 
       return response;
     } catch (error) {
-      throw new Error(
+      throw new ArchiveError(
         `Failed to retrieve website: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }

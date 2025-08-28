@@ -16,6 +16,7 @@ interface Config {
     s3ApiEndpoint: string;
     publicDevUrl: string;
     r2BucketName: string;
+    r2BucketPrefix: string;
   };
 }
 
@@ -33,6 +34,7 @@ export const config: Config = {
     s3ApiEndpoint: process.env.S3_API || '',
     publicDevUrl: process.env.CLOUDFLARE_PUBLIC_DEVELOPMENT_URL_R2 || '',
     r2BucketName: process.env.R2_BUCKET_NAME || '',
+    r2BucketPrefix: process.env.R2_BUCKET_PREFIX || 'web-archive-project',
   },
 };
 

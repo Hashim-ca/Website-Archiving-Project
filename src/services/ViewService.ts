@@ -1,6 +1,7 @@
 import { Readable } from 'stream';
 import { Types } from 'mongoose';
 import { Snapshot, ISnapshot } from '../models/Snapshot';
+import { R2StorageService } from './R2StorageService';
 
 export interface StreamResponse {
   stream: Readable;
@@ -9,6 +10,11 @@ export interface StreamResponse {
 }
 
 export class ViewService {
+  private r2Service: R2StorageService;
+
+  constructor() {
+    this.r2Service = new R2StorageService();
+  }
   /**
    * Gets the MIME type based on file extension
    */
@@ -71,34 +77,39 @@ export class ViewService {
 
   /**
    * Fetches file from Cloudflare R2 and returns stream
-   * Note: This is a placeholder implementation - you'll need to integrate with actual R2 client
    */
   private async fetchFromR2(objectKey: string): Promise<StreamResponse> {
-    // TODO: Replace with actual Cloudflare R2 implementation
-    // This is a placeholder that should be replaced with:
-    // - AWS S3 SDK configured for R2
-    // - Proper authentication and bucket configuration
-    // - Error handling for missing objects
-    
-    throw new Error('R2 integration not yet implemented - please configure Cloudflare R2 client');
-    
-    // Example of what the real implementation would look like:
-    /*
-    const response = await this.r2Client.getObject({
-      Bucket: this.bucketName,
-      Key: objectKey
-    }).promise();
+    try {
+      const response = await this.r2Service.getObject(objectKey);
 
-    if (!response.Body) {
-      throw new Error('Object not found in R2');
+      if (!response.Body) {
+        throw new Error('Object not found in R2');
+      }
+
+      // Convert AWS S3 Body to Node.js Readable stream
+      let stream: Readable;
+      if (response.Body instanceof Buffer) {
+        // If Body is a Buffer, create a readable stream from it
+        stream = Readable.from(response.Body);
+      } else {
+        // If Body is already a stream, use it directly
+        stream = response.Body as Readable;
+      }
+
+      return {
+        stream,
+        contentType: response.ContentType || this.getContentType(objectKey),
+        contentLength: response.ContentLength
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.includes('NoSuchKey') || error.message.includes('NotFound')) {
+          throw new Error('File not found in storage');
+        }
+        throw new Error(`Failed to fetch file from R2: ${error.message}`);
+      }
+      throw new Error('Failed to fetch file from R2: Unknown error');
     }
-
-    return {
-      stream: response.Body as Readable,
-      contentType: response.ContentType || this.getContentType(objectKey),
-      contentLength: response.ContentLength
-    };
-    */
   }
 
   /**
@@ -107,10 +118,9 @@ export class ViewService {
   public async getArchivedFile(snapshotId: string, filePath: string): Promise<StreamResponse> {
     // Find and validate snapshot
     const snapshot = await this.findSnapshot(snapshotId);
-
     // Construct R2 object key
     const objectKey = this.constructObjectKey(snapshot.storagePath, filePath);
-
+    
     // Fetch from R2
     const response = await this.fetchFromR2(objectKey);
 

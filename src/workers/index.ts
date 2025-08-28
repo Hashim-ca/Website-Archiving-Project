@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { config, validateConfig } from './config/environment';
-import { WorkerService } from './services/WorkerService';
+import { config, validateConfig } from '../config/environment';
+import { WorkerService } from './WorkerService';
 
 async function startWorker(): Promise<void> {
   try {

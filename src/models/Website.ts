@@ -1,6 +1,5 @@
 import { Schema, model, Document, Types } from 'mongoose';
-
-interface ISnapshot extends Document {}
+import { ISnapshot } from './Snapshot';
 
 export interface IWebsite extends Document {
   domain: string;

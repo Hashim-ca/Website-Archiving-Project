@@ -4,9 +4,11 @@ import { config } from '../config/environment';
 export class R2StorageService {
   private s3: AWS.S3;
   private bucketName: string;
+  private bucketPrefix: string;
 
   constructor() {
     this.bucketName = config.cloudflare.r2BucketName;
+    this.bucketPrefix = config.cloudflare.r2BucketPrefix;
 
     this.s3 = new AWS.S3({
       endpoint: config.cloudflare.s3ApiEndpoint,
@@ -18,9 +20,10 @@ export class R2StorageService {
   }
 
   async uploadFile(key: string, body: Buffer | string, contentType?: string): Promise<void> {
+    const fullKey = `${this.bucketPrefix}/${key}`;
     const params: AWS.S3.PutObjectRequest = {
       Bucket: this.bucketName,
-      Key: key,
+      Key: fullKey,
       Body: body,
       ContentType: contentType,
     };
@@ -37,9 +40,10 @@ export class R2StorageService {
 
   async deleteFolder(prefix: string): Promise<void> {
     try {
+      const fullPrefix = `${this.bucketPrefix}/${prefix}`;
       const listParams: AWS.S3.ListObjectsV2Request = {
         Bucket: this.bucketName,
-        Prefix: prefix,
+        Prefix: fullPrefix,
       };
 
       const listedObjects = await this.s3.listObjectsV2(listParams).promise();
@@ -103,18 +107,20 @@ export class R2StorageService {
   }
 
   async getObject(key: string): Promise<AWS.S3.GetObjectOutput> {
+    const fullKey = `${this.bucketPrefix}/${key}`;
     const params: AWS.S3.GetObjectRequest = {
       Bucket: this.bucketName,
-      Key: key,
+      Key: fullKey,
     };
 
     try {
       return await this.s3.getObject(params).promise();
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(`Failed to get object ${key}: ${error.message}`);
+        console.log(`R2StorageService error details:`, error);
+        throw new Error(`Failed to get object ${fullKey}: ${error.message}`);
       }
-      throw new Error(`Failed to get object ${key}: Unknown error`);
+      throw new Error(`Failed to get object ${fullKey}: Unknown error`);
     }
   }
 }
