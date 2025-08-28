@@ -3,6 +3,7 @@ import {
   CreateArchiveResponse, 
   GetWebsiteResponse, 
   SitePageSuggestionsResponse,
+  GetJobStatusResponse,
   ApiError 
 } from '@/types';
 
@@ -76,6 +77,16 @@ class ApiClient {
     return this.request<SitePageSuggestionsResponse>(`/api/site-page-suggestions?${params.toString()}`);
   }
 
+  // Job status endpoints
+  async getJobStatus(jobId: string): Promise<GetJobStatusResponse> {
+    return this.request<GetJobStatusResponse>(`/api/jobs/${jobId}`);
+  }
+
+  async getMultipleJobStatuses(jobIds: string[]): Promise<GetJobStatusResponse[]> {
+    const params = new URLSearchParams({ ids: jobIds.join(',') });
+    return this.request<GetJobStatusResponse[]>(`/api/jobs?${params.toString()}`);
+  }
+
   // View content endpoint (returns URL for viewing)
   getViewUrl(snapshotId: string, filePath: string = 'index.html'): string {
     return `${this.baseUrl}/view/${snapshotId}/${filePath}`;
@@ -89,4 +100,6 @@ export const apiClient = new ApiClient();
 export const createArchive = (data: CreateArchiveRequest) => apiClient.createArchive(data);
 export const getWebsite = (domain: string, path?: string) => apiClient.getWebsite(domain, path);
 export const getSitePageSuggestions = (domain: string) => apiClient.getSitePageSuggestions(domain);
+export const getJobStatus = (jobId: string) => apiClient.getJobStatus(jobId);
+export const getMultipleJobStatuses = (jobIds: string[]) => apiClient.getMultipleJobStatuses(jobIds);
 export const getViewUrl = (snapshotId: string, filePath?: string) => apiClient.getViewUrl(snapshotId, filePath);

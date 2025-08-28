@@ -36,6 +36,32 @@ export interface ViewErrorResponse {
   error: string;
 }
 
+// Job status types
+export interface GetJobStatusRequest {
+  jobId: string;
+}
+
+export interface GetJobStatusResponse {
+  jobId: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  error?: string;
+  createdAt: Date;
+  processedAt?: Date;
+  urlToArchive: string;
+  website?: {
+    domain: string;
+    snapshots: {
+      _id: string;
+      path: string;
+      status: 'processing' | 'completed' | 'failed';
+      storagePath: string;
+      entrypoint: string;
+      createdAt: Date;
+      updatedAt: Date;
+    }[];
+  };
+}
+
 // Site page suggestions types
 export interface SitePageSuggestionsRequest {
   domain: string;

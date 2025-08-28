@@ -6,6 +6,7 @@ import archiveRoutes from './routes/archive';
 import websiteRoutes from './routes/websites';
 import viewRoutes from './routes/view';
 import sitePageSuggestionsRoutes from './routes/site-page-suggestions';
+import jobRoutes from './routes/jobs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -37,6 +38,7 @@ app.use(express.json());
 app.use('/api', archiveRoutes);
 app.use('/api', websiteRoutes);
 app.use('/api', sitePageSuggestionsRoutes);
+app.use('/api', jobRoutes);
 app.use('/view', viewRoutes);
 
 app.get('/', (_req, res) => {

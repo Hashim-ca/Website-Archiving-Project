@@ -1,14 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useArchive } from './useArchive';
 import { useWebsiteQuery } from './useWebsite';
 import { useUrlValidation } from './useUrlValidation';
-import { CreateArchiveResponse, GetWebsiteResponse } from '@/types';
+import { useJobStatus } from './useJobStatus';
+import { CreateArchiveResponse, GetWebsiteResponse, GetJobStatusResponse } from '@/types';
 
 interface UseArchiveWorkflowState {
-  step: 'input' | 'creating' | 'created' | 'viewing' | 'error';
+  step: 'input' | 'creating' | 'processing' | 'completed' | 'viewing' | 'error';
   url: string;
   domain: string | null;
   archiveResponse: CreateArchiveResponse | null;
+  jobStatus: GetJobStatusResponse | null;
   websiteData: GetWebsiteResponse | null;
 }
 
@@ -26,10 +28,12 @@ interface UseArchiveWorkflowResult extends UseArchiveWorkflowState {
   
   // Loading states
   isCreatingArchive: boolean;
+  isProcessingJob: boolean;
   isLoadingWebsite: boolean;
   
   // Errors
   archiveError: string | null;
+  jobError: string | null;
   websiteError: string | null;
 }
 
@@ -39,11 +43,16 @@ export const useArchiveWorkflow = (): UseArchiveWorkflowResult => {
     url: '',
     domain: null,
     archiveResponse: null,
+    jobStatus: null,
     websiteData: null,
   });
 
   const { validateUrl, extractDomain } = useUrlValidation();
   const archive = useArchive();
+  const jobStatusHook = useJobStatus({
+    stopPollingOnComplete: true,
+    pollingInterval: 2000, // Poll every 2 seconds
+  });
   const websiteQuery = useWebsiteQuery();
 
   const setUrl = useCallback((url: string) => {
@@ -57,8 +66,9 @@ export const useArchiveWorkflow = (): UseArchiveWorkflowResult => {
     
     // Reset previous states when URL changes
     archive.reset();
+    jobStatusHook.stopPolling();
     websiteQuery.reset();
-  }, [extractDomain, archive, websiteQuery]);
+  }, [extractDomain, archive, jobStatusHook, websiteQuery]);
 
   const reset = useCallback(() => {
     setState({
@@ -66,11 +76,13 @@ export const useArchiveWorkflow = (): UseArchiveWorkflowResult => {
       url: '',
       domain: null,
       archiveResponse: null,
+      jobStatus: null,
       websiteData: null,
     });
     archive.reset();
+    jobStatusHook.stopPolling();
     websiteQuery.reset();
-  }, [archive, websiteQuery]);
+  }, [archive, jobStatusHook, websiteQuery]);
 
   const startArchive = useCallback(async (): Promise<boolean> => {
     if (!state.url || !validateUrl(state.url).isValid) {
@@ -85,15 +97,18 @@ export const useArchiveWorkflow = (): UseArchiveWorkflowResult => {
     if (response) {
       setState(prev => ({
         ...prev,
-        step: 'created',
+        step: 'processing',
         archiveResponse: response,
       }));
+      
+      // Start polling for job status
+      jobStatusHook.startPolling(response.jobId);
       return true;
     } else {
       setState(prev => ({ ...prev, step: 'error' }));
       return false;
     }
-  }, [state.url, validateUrl, archive]);
+  }, [state.url, validateUrl, archive, jobStatusHook]);
 
   const viewWebsite = useCallback(async (domain: string): Promise<boolean> => {
     setState(prev => ({ ...prev, step: 'viewing' }));
@@ -112,6 +127,41 @@ export const useArchiveWorkflow = (): UseArchiveWorkflowResult => {
     }
   }, [websiteQuery]);
 
+  // Watch for job status changes
+  useEffect(() => {
+    if (jobStatusHook.data && state.step === 'processing') {
+      setState(prev => ({
+        ...prev,
+        jobStatus: jobStatusHook.data,
+      }));
+
+      // Update step based on job status
+      if (jobStatusHook.data.status === 'completed') {
+        setState(prev => ({ ...prev, step: 'completed' }));
+        
+        // If job completed successfully and has website data, use it
+        if (jobStatusHook.data.website) {
+          setState(prev => ({
+            ...prev,
+            websiteData: {
+              domain: jobStatusHook.data!.website!.domain,
+              originalUrl: state.url,
+              snapshots: jobStatusHook.data!.website!.snapshots.map(snapshot => ({
+                ...snapshot,
+                createdAt: new Date(snapshot.createdAt),
+                updatedAt: new Date(snapshot.updatedAt),
+              })),
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+          }));
+        }
+      } else if (jobStatusHook.data.status === 'failed') {
+        setState(prev => ({ ...prev, step: 'error' }));
+      }
+    }
+  }, [jobStatusHook.data, state.step, state.url]);
+
   const isValidUrl = validateUrl(state.url).isValid;
 
   return {
@@ -122,8 +172,10 @@ export const useArchiveWorkflow = (): UseArchiveWorkflowResult => {
     viewWebsite,
     isValidUrl,
     isCreatingArchive: archive.isLoading,
+    isProcessingJob: jobStatusHook.isPolling,
     isLoadingWebsite: websiteQuery.isLoading,
     archiveError: archive.error,
+    jobError: jobStatusHook.error,
     websiteError: websiteQuery.error,
   };
 };

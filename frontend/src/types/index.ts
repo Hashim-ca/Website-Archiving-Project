@@ -77,6 +77,31 @@ export interface SitePageSuggestionsResponse {
   suggestions: SitePageSuggestion[];
 }
 
+export interface GetJobStatusRequest {
+  jobId: string;
+}
+
+export interface GetJobStatusResponse {
+  jobId: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  error?: string;
+  createdAt: string; // ISO date string for API transport
+  processedAt?: string;
+  urlToArchive: string;
+  website?: {
+    domain: string;
+    snapshots: {
+      _id: string;
+      path: string;
+      status: 'processing' | 'completed' | 'failed';
+      storagePath: string;
+      entrypoint: string;
+      createdAt: string;
+      updatedAt: string;
+    }[];
+  };
+}
+
 // UI State types
 export interface LoadingState {
   isLoading: boolean;
