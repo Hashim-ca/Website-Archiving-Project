@@ -1,4 +1,5 @@
-# Website Archiving Project - Backend
+#<img width="1720" height="1275" alt="Website Archive Project" src="https://github.com/user-attachments/assets/b2014837-acdb-45d7-a71c-b846a17ad984" />
+ Website Archiving Project - Backend
 
 This is the backend for the Website Archiving Project. It provides an API and a background worker to capture, store, and serve snapshots of websites.
 
