@@ -120,21 +120,21 @@ export default function DomainPage() {
     return (
       <div 
         className="min-h-screen p-6"
-        style={{ backgroundColor: '#EBEBD3' }}
+        style={{ backgroundColor: '#F8F6F0' }}
       >
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center animate-fade-in-up">
               <div className="mb-6">
-                <div className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
-                  <Globe className="w-8 h-8" style={{ color: '#2B806B' }} />
+                <div className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'rgba(27, 77, 62, 0.1)' }}>
+                  <Globe className="w-8 h-8" style={{ color: '#1B4D3E' }} />
                 </div>
               </div>
               <LoadingSpinner size="lg" message="" />
-              <p className="mt-4 text-lg font-semibold" style={{ color: '#2B806B' }}>
+              <p className="mt-4 text-lg font-semibold" style={{ color: '#1B4D3E' }}>
                 Loading {domain}
               </p>
-              <p className="mt-2 text-sm" style={{ color: '#7E8381' }}>
+              <p className="mt-2 text-sm" style={{ color: '#5A5A5A' }}>
                 Fetching archives and page suggestions...
               </p>
             </div>
@@ -147,17 +147,17 @@ export default function DomainPage() {
   return (
     <div 
       className="min-h-screen p-6"
-      style={{ backgroundColor: '#EBEBD3' }}
+      style={{ backgroundColor: '#F8F6F0' }}
     >
       <div className="max-w-7xl mx-auto">
         {/* Header with navigation */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+        <div className="mb-12">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
             <Link href="/">
               <Button
                 variant="outline"
-                className="flex items-center space-x-2"
-                style={{ borderColor: '#2B806B', color: '#2B806B' }}
+                className="flex items-center justify-center space-x-2 px-4 py-2 font-medium transition-all duration-200 hover:shadow-md w-full sm:w-auto"
+                style={{ borderColor: '#1B4D3E', color: '#1B4D3E' }}
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Search</span>
@@ -168,8 +168,8 @@ export default function DomainPage() {
               variant="outline"
               onClick={handleRefresh}
               disabled={isWebsiteLoading || suggestionsQuery.isLoading}
-              className="flex items-center space-x-2"
-              style={{ borderColor: '#2B806B', color: '#2B806B' }}
+              className="flex items-center justify-center space-x-2 px-4 py-2 font-medium transition-all duration-200 hover:shadow-md w-full sm:w-auto"
+              style={{ borderColor: '#1B4D3E', color: '#1B4D3E' }}
             >
               <RefreshCw className={`w-4 h-4 ${(isWebsiteLoading || suggestionsQuery.isLoading) ? 'animate-spin' : ''}`} />
               <span>Refresh</span>
@@ -178,12 +178,12 @@ export default function DomainPage() {
 
           {/* Domain Header */}
           <div className="text-center animate-fade-in-up">
-            <div className="inline-flex items-center space-x-6 px-8 py-6 rounded-2xl shadow-lg border-0" style={{ backgroundColor: 'white' }}>
-              <div className="p-3 rounded-xl" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
-                <Globe className="w-8 h-8" style={{ color: '#2B806B' }} />
+            <div className="inline-flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8 px-6 md:px-10 py-6 md:py-8 rounded-3xl shadow-lg border-0" style={{ backgroundColor: 'white' }}>
+              <div className="p-4 rounded-2xl shadow-sm" style={{ backgroundColor: 'rgba(27, 77, 62, 0.1)' }}>
+                <Globe className="w-8 md:w-10 h-8 md:h-10" style={{ color: '#1B4D3E' }} />
               </div>
-              <div>
-                <h1 className="text-3xl font-bold mb-2" style={{ color: '#2B806B' }}>
+              <div className="text-center md:text-left">
+                <h1 className="text-2xl md:text-4xl font-bold mb-3 tracking-tight" style={{ color: '#1B4D3E' }}>
                   {domain}
                 </h1>
                 <div className="flex items-center justify-center space-x-3">
@@ -191,9 +191,9 @@ export default function DomainPage() {
                     variant="outline" 
                     className="px-3 py-1 font-medium"
                     style={{ 
-                      borderColor: '#2B806B', 
-                      color: '#2B806B',
-                      backgroundColor: 'rgba(43, 128, 107, 0.05)'
+                      borderColor: '#1B4D3E', 
+                      color: '#1B4D3E',
+                      backgroundColor: 'rgba(27, 77, 62, 0.05)'
                     }}
                   >
                     <Archive className="w-3 h-3 mr-1" />
@@ -204,9 +204,9 @@ export default function DomainPage() {
                       variant="outline" 
                       className="px-3 py-1 font-medium animate-pulse"
                       style={{ 
-                        borderColor: '#DADA5B', 
-                        color: '#DADA5B',
-                        backgroundColor: 'rgba(218, 218, 91, 0.1)'
+                        borderColor: '#D4B942', 
+                        color: '#D4B942',
+                        backgroundColor: 'rgba(212, 185, 66, 0.1)'
                       }}
                     >
                       <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
@@ -234,10 +234,10 @@ export default function DomainPage() {
 
         {/* Error Display */}
         {error && (
-          <Card className="max-w-2xl mx-auto mb-8 border-2" style={{ backgroundColor: 'white', borderColor: '#875B4E' }}>
+          <Card className="max-w-2xl mx-auto mb-8 border-2" style={{ backgroundColor: 'white', borderColor: '#B85450' }}>
             <CardContent className="pt-6">
               <Alert style={{ backgroundColor: 'transparent', border: 'none', padding: 0 }}>
-                <AlertDescription style={{ color: '#875B4E' }}>
+                <AlertDescription style={{ color: '#B85450' }}>
                   <strong>Error:</strong> {error}
                 </AlertDescription>
               </Alert>
@@ -247,8 +247,8 @@ export default function DomainPage() {
                   className="px-4 py-2 text-sm font-medium rounded-lg border transition-colors"
                   style={{
                     backgroundColor: 'white',
-                    borderColor: '#2B806B',
-                    color: '#2B806B'
+                    borderColor: '#1B4D3E',
+                    color: '#1B4D3E'
                   }}
                 >
                   Dismiss
@@ -261,7 +261,7 @@ export default function DomainPage() {
         {/* Main Content Grid */}
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Website Archives */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {enhancedWebsiteData ? (
               <div className="animate-fade-in-up">
                 <WebsiteResults website={enhancedWebsiteData} />
@@ -269,8 +269,8 @@ export default function DomainPage() {
             ) : (
               <Card className="shadow-lg border-0 animate-scale-in" style={{ backgroundColor: 'white' }}>
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center space-x-3" style={{ color: '#2B806B' }}>
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+                  <CardTitle className="text-lg flex items-center space-x-3" style={{ color: '#1B4D3E' }}>
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(27, 77, 62, 0.1)' }}>
                       <Archive className="w-5 h-5" />
                     </div>
                     <span>Domain Archives</span>
@@ -279,24 +279,24 @@ export default function DomainPage() {
                 <CardContent>
                   <div className="text-center py-12">
                     <div className="mb-6">
-                      <div className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
-                        <Archive className="w-10 h-10" style={{ color: '#2B806B' }} />
+                      <div className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'rgba(27, 77, 62, 0.1)' }}>
+                        <Archive className="w-10 h-10" style={{ color: '#1B4D3E' }} />
                       </div>
                     </div>
-                    <h3 className="text-xl font-bold mb-3" style={{ color: '#2B806B' }}>
+                    <h3 className="text-xl font-bold mb-3" style={{ color: '#1B4D3E' }}>
                       No archives yet for {domain}
                     </h3>
-                    <p className="text-sm mb-6 max-w-md mx-auto leading-relaxed" style={{ color: '#7E8381' }}>
+                    <p className="text-sm mb-6 max-w-md mx-auto leading-relaxed" style={{ color: '#5A5A5A' }}>
                       {activeJob 
                         ? 'Your archive job is being processed. The first snapshot will appear here once complete.'
                         : 'Create your first archive by entering a URL from this domain in the search bar above.'
                       }
                     </p>
                     {activeJob && activeJob.status && (
-                      <div className="mt-6 p-4 rounded-xl max-w-sm mx-auto" style={{ backgroundColor: 'rgba(218, 218, 91, 0.1)' }}>
+                      <div className="mt-6 p-4 rounded-xl max-w-sm mx-auto" style={{ backgroundColor: 'rgba(212, 185, 66, 0.1)' }}>
                         <div className="flex items-center justify-center space-x-2 mb-3">
-                          <RefreshCw className="w-4 h-4 animate-spin" style={{ color: '#DADA5B' }} />
-                          <p className="text-sm font-semibold" style={{ color: '#2B806B' }}>
+                          <RefreshCw className="w-4 h-4 animate-spin" style={{ color: '#D4B942' }} />
+                          <p className="text-sm font-semibold" style={{ color: '#1B4D3E' }}>
                             {activeJob.status.status === 'processing' ? 'Processing Archive' : `Status: ${activeJob.status.status}`}
                           </p>
                         </div>
@@ -306,13 +306,13 @@ export default function DomainPage() {
                               <div 
                                 className="h-2 rounded-full transition-all duration-1000 ease-in-out animate-shimmer"
                                 style={{ 
-                                  backgroundColor: '#DADA5B',
+                                  backgroundColor: '#D4B942',
                                   width: '70%',
-                                  background: 'linear-gradient(90deg, #DADA5B 0%, rgba(218, 218, 91, 0.7) 50%, #DADA5B 100%)'
+                                  background: 'linear-gradient(90deg, #D4B942 0%, rgba(218, 218, 91, 0.7) 50%, #D4B942 100%)'
                                 }}
                               />
                             </div>
-                            <p className="text-xs" style={{ color: '#7E8381' }}>
+                            <p className="text-xs" style={{ color: '#5A5A5A' }}>
                               Capturing page content and assets...
                             </p>
                           </div>
@@ -326,7 +326,7 @@ export default function DomainPage() {
           </div>
 
           {/* Page Suggestions */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {suggestions ? (
               <div className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
                 <RecommendedPages 
@@ -337,8 +337,8 @@ export default function DomainPage() {
             ) : (
               <Card className="shadow-lg border-0 animate-scale-in" style={{ backgroundColor: 'white', animationDelay: '0.1s' }}>
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center space-x-3" style={{ color: '#2B806B' }}>
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+                  <CardTitle className="text-lg flex items-center space-x-3" style={{ color: '#1B4D3E' }}>
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(27, 77, 62, 0.1)' }}>
                       <Lightbulb className="w-5 h-5" />
                     </div>
                     <span>Suggested Pages</span>
@@ -348,13 +348,13 @@ export default function DomainPage() {
                   <div className="text-center py-12">
                     <div className="mb-6">
                       <div className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'rgba(126, 131, 129, 0.1)' }}>
-                        <Lightbulb className="w-10 h-10" style={{ color: '#7E8381' }} />
+                        <Lightbulb className="w-10 h-10" style={{ color: '#5A5A5A' }} />
                       </div>
                     </div>
-                    <h3 className="text-xl font-bold mb-3" style={{ color: '#2B806B' }}>
+                    <h3 className="text-xl font-bold mb-3" style={{ color: '#1B4D3E' }}>
                       No suggestions available
                     </h3>
-                    <p className="text-sm max-w-md mx-auto leading-relaxed" style={{ color: '#7E8381' }}>
+                    <p className="text-sm max-w-md mx-auto leading-relaxed" style={{ color: '#5A5A5A' }}>
                       Page suggestions will appear here after you archive the main page. 
                       Our system will analyze the site structure to recommend additional content to preserve.
                     </p>

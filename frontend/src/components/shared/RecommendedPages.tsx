@@ -29,10 +29,10 @@ export const RecommendedPages: React.FC<RecommendedPagesProps> = ({
 
   if (suggestions.suggestions.length === 0) {
     return (
-      <Card className={cn('w-full', className)} style={{ backgroundColor: '#EBEBD3' }}>
+      <Card className={cn('w-full', className)} style={{ backgroundColor: '#F8F6F0' }}>
         <CardContent className="pt-6">
           <Alert>
-            <AlertDescription style={{ color: '#7E8381' }}>
+            <AlertDescription style={{ color: '#5A5A5A' }}>
               No page suggestions found for {suggestions.domain}.
             </AlertDescription>
           </Alert>
@@ -42,52 +42,52 @@ export const RecommendedPages: React.FC<RecommendedPagesProps> = ({
   }
 
   return (
-    <Card className={cn('w-full', className)} style={{ backgroundColor: '#EBEBD3' }}>
-      <CardHeader>
-        <CardTitle className="text-xl font-bold" style={{ color: '#2B806B' }}>
+    <Card className={cn('w-full shadow-lg border-0', className)} style={{ backgroundColor: 'white' }}>
+      <CardHeader className="pb-6">
+        <CardTitle className="text-2xl font-bold mb-3" style={{ color: '#1B4D3E' }}>
           Recommended Pages to Archive
         </CardTitle>
-        <p className="text-sm" style={{ color: '#7E8381' }}>
+        <p className="text-sm font-medium" style={{ color: '#5A5A5A' }}>
           Found {suggestions.suggestions.length} pages on {suggestions.domain}
         </p>
       </CardHeader>
       
-      <CardContent>
-        <div className="grid gap-3 max-h-96 overflow-y-auto">
+      <CardContent className="pt-0">
+        <div className="grid gap-4 max-h-96 overflow-y-auto">
           {suggestions.suggestions.map((suggestion, index) => (
             <div
               key={`${suggestion.url}-${index}`}
-              className="flex items-center justify-between p-4 border rounded-lg"
+              className="flex items-center justify-between p-5 border rounded-xl shadow-sm transition-all duration-200 hover:shadow-md"
               style={{ 
-                backgroundColor: 'white',
-                borderColor: '#7E8381'
+                backgroundColor: '#F8F6F0',
+                borderColor: '#5A5A5A'
               }}
             >
               <div className="flex-1 min-w-0">
                 <p 
-                  className="font-medium truncate"
-                  style={{ color: '#2B806B' }}
+                  className="font-bold truncate text-base"
+                  style={{ color: '#1B4D3E' }}
                   title={suggestion.url}
                 >
                   {truncateText(suggestion.url, 60)}
                 </p>
                 <p 
-                  className="text-xs mt-1"
-                  style={{ color: '#7E8381' }}
+                  className="text-sm mt-2 font-medium"
+                  style={{ color: '#5A5A5A' }}
                 >
                   Click to archive this page
                 </p>
               </div>
               
-              <div className="flex gap-2 ml-4">
+              <div className="flex gap-3 ml-5">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => window.open(suggestion.url, '_blank', 'noopener,noreferrer')}
-                  className="text-xs px-3"
+                  className="text-sm px-4 py-2 font-semibold transition-all duration-200 hover:scale-[1.02] hover:shadow-md"
                   style={{
-                    borderColor: '#7E8381',
-                    color: '#7E8381'
+                    borderColor: '#5A5A5A',
+                    color: '#5A5A5A'
                   }}
                 >
                   Visit
@@ -96,9 +96,9 @@ export const RecommendedPages: React.FC<RecommendedPagesProps> = ({
                   size="sm"
                   onClick={() => handleArchivePage(suggestion.url)}
                   disabled={isArchiving}
-                  className="text-xs px-3"
+                  className="text-sm px-4 py-2 font-semibold transition-all duration-200 hover:scale-[1.02] hover:shadow-md"
                   style={{
-                    backgroundColor: '#2B806B',
+                    backgroundColor: '#1B4D3E',
                     color: 'white'
                   }}
                 >
@@ -110,8 +110,8 @@ export const RecommendedPages: React.FC<RecommendedPagesProps> = ({
         </div>
         
         {suggestions.suggestions.length > 5 && (
-          <div className="mt-4 pt-4 border-t" style={{ borderColor: '#7E8381' }}>
-            <p className="text-xs text-center" style={{ color: '#7E8381' }}>
+          <div className="mt-6 pt-4 border-t" style={{ borderColor: '#5A5A5A' }}>
+            <p className="text-sm text-center font-medium" style={{ color: '#5A5A5A' }}>
               Showing {Math.min(suggestions.suggestions.length, 20)} of {suggestions.suggestions.length} pages
             </p>
           </div>

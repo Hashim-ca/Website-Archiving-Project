@@ -17,7 +17,8 @@ import {
   Eye, 
   X, 
   Trash2,
-  ArrowRight 
+  ArrowRight,
+  Activity 
 } from 'lucide-react';
 
 interface EnhancedActiveJobsProps {
@@ -53,17 +54,17 @@ export const EnhancedActiveJobs: React.FC<EnhancedActiveJobsProps> = ({
 
   const getStatusIcon = (status: string | undefined, hasError: boolean) => {
     if (hasError || status === 'failed') {
-      return <AlertTriangle className="w-4 h-4" style={{ color: '#875B4E' }} />;
+      return <AlertTriangle className="w-4 h-4" style={{ color: '#B85450' }} />;
     }
     
     switch (status) {
       case 'completed':
-        return <CheckCircle className="w-4 h-4" style={{ color: '#2B806B' }} />;
+        return <CheckCircle className="w-4 h-4" style={{ color: '#1B4D3E' }} />;
       case 'processing':
-        return <RefreshCw className="w-4 h-4 animate-spin" style={{ color: '#DADA5B' }} />;
+        return <RefreshCw className="w-4 h-4 animate-spin" style={{ color: '#D4B942' }} />;
       case 'pending':
       default:
-        return <Clock className="w-4 h-4" style={{ color: '#7E8381' }} />;
+        return <Clock className="w-4 h-4" style={{ color: '#5A5A5A' }} />;
     }
   };
 
@@ -72,14 +73,14 @@ export const EnhancedActiveJobs: React.FC<EnhancedActiveJobsProps> = ({
       return (
         <Badge 
           variant="outline"
-          className="px-2 py-1 text-xs font-medium"
+          className="px-3 py-1.5 text-xs font-bold tracking-wide rounded-full border-2 shadow-sm"
           style={{ 
-            borderColor: '#875B4E', 
-            color: '#875B4E',
-            backgroundColor: 'rgba(135, 91, 78, 0.1)'
+            borderColor: '#B85450', 
+            color: '#B85450',
+            backgroundColor: 'rgba(184, 84, 80, 0.1)'
           }}
         >
-          Failed
+          FAILED
         </Badge>
       );
     }
@@ -89,28 +90,28 @@ export const EnhancedActiveJobs: React.FC<EnhancedActiveJobsProps> = ({
         return (
           <Badge 
             variant="outline"
-            className="px-2 py-1 text-xs font-medium"
+            className="px-3 py-1.5 text-xs font-bold tracking-wide rounded-full border-2 shadow-sm"
             style={{ 
-              borderColor: '#2B806B', 
-              color: '#2B806B',
-              backgroundColor: 'rgba(43, 128, 107, 0.1)'
+              borderColor: '#1B4D3E', 
+              color: '#1B4D3E',
+              backgroundColor: 'rgba(43, 128, 107, 0.15)'
             }}
           >
-            Completed
+            COMPLETED
           </Badge>
         );
       case 'processing':
         return (
           <Badge 
             variant="outline"
-            className="px-2 py-1 text-xs font-medium animate-pulse"
+            className="px-3 py-1.5 text-xs font-bold tracking-wide rounded-full border-2 shadow-sm animate-pulse"
             style={{ 
-              borderColor: '#DADA5B', 
-              color: '#DADA5B',
-              backgroundColor: 'rgba(218, 218, 91, 0.1)'
+              borderColor: '#D4B942', 
+              color: '#D4B942',
+              backgroundColor: 'rgba(218, 218, 91, 0.15)'
             }}
           >
-            Processing
+            PROCESSING
           </Badge>
         );
       case 'pending':
@@ -118,14 +119,14 @@ export const EnhancedActiveJobs: React.FC<EnhancedActiveJobsProps> = ({
         return (
           <Badge 
             variant="outline"
-            className="px-2 py-1 text-xs font-medium"
+            className="px-3 py-1.5 text-xs font-bold tracking-wide rounded-full border-2 shadow-sm"
             style={{ 
-              borderColor: '#7E8381', 
-              color: '#7E8381',
-              backgroundColor: 'rgba(126, 131, 129, 0.1)'
+              borderColor: '#5A5A5A', 
+              color: '#5A5A5A',
+              backgroundColor: 'rgba(90, 90, 90, 0.1)'
             }}
           >
-            Pending
+            PENDING
           </Badge>
         );
     }
@@ -148,52 +149,73 @@ export const EnhancedActiveJobs: React.FC<EnhancedActiveJobsProps> = ({
   }
 
   return (
-    <Card className={cn('shadow-lg border-0 animate-fade-in-up', className)} style={{ backgroundColor: 'white' }}>
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl flex items-center space-x-3" style={{ color: '#2B806B' }}>
-            <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
-              <Briefcase className="w-5 h-5" />
+    <Card className={cn('shadow-xl border-0 animate-fade-in-up backdrop-blur-sm', className)} 
+          style={{ 
+            backgroundColor: 'white',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+          }}>
+      <CardHeader className="pb-6 border-b border-gray-50">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center space-x-4">
+            <div className="p-3 rounded-xl transition-all duration-200 hover:scale-105" 
+                 style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+              <Briefcase className="w-6 h-6" style={{ color: '#1B4D3E' }} />
             </div>
-            <span>
-              {showDomainFilter ? `Jobs for ${showDomainFilter}` : 'Archive Jobs'}
-              {isPolling && activeJobsCount > 0 && (
-                <RefreshCw className="w-4 h-4 ml-2 animate-spin inline" style={{ color: '#DADA5B' }} />
-              )}
-            </span>
-          </CardTitle>
+            <div>
+              <CardTitle className="text-2xl font-bold tracking-tight" style={{ color: '#1B4D3E' }}>
+                {showDomainFilter ? `Jobs for ${showDomainFilter}` : 'Archive Jobs'}
+              </CardTitle>
+              <p className="text-sm mt-1 font-medium" style={{ color: '#5A5A5A' }}>
+                {visibleJobs.length} {visibleJobs.length === 1 ? 'job' : 'jobs'} 
+                {displayJobs.length > maxVisible && ` of ${displayJobs.length} total`}
+              </p>
+            </div>
+          </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
+            {isPolling && activeJobsCount > 0 && (
+              <div className="flex items-center space-x-2 px-3 py-1.5 rounded-full" 
+                   style={{ backgroundColor: 'rgba(218, 218, 91, 0.1)' }}>
+                <Activity className="w-4 h-4 animate-pulse" style={{ color: '#D4B942' }} />
+                <span className="text-xs font-semibold" style={{ color: '#D4B942' }}>
+                  {activeJobsCount} Active
+                </span>
+              </div>
+            )}
             {completedJobs.length > 0 && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={clearCompletedJobs}
-                className="flex items-center space-x-1"
-                style={{ borderColor: '#7E8381', color: '#7E8381' }}
+                className="flex items-center space-x-2 transition-all duration-200 hover:scale-105 hover:shadow-md"
+                style={{ borderColor: '#5A5A5A', color: '#5A5A5A' }}
               >
-                <Trash2 className="w-3 h-3" />
-                <span>Clear Completed</span>
+                <Trash2 className="w-4 h-4" />
+                <span className="font-medium">Clear Completed</span>
               </Button>
             )}
           </div>
         </div>
         
         {isPolling && activeJobsCount > 0 && (
-          <div className="flex items-center space-x-2 mt-2">
+          <div className="flex items-center space-x-3 mt-4 p-3 rounded-lg" 
+               style={{ backgroundColor: 'rgba(218, 218, 91, 0.05)' }}>
             <div className="flex space-x-1">
-              <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: '#DADA5B' }} />
-              <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: '#DADA5B', animationDelay: '0.2s' }} />
-              <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: '#DADA5B', animationDelay: '0.4s' }} />
+              <div className="w-2 h-2 rounded-full animate-pulse" 
+                   style={{ backgroundColor: '#D4B942' }} />
+              <div className="w-2 h-2 rounded-full animate-pulse" 
+                   style={{ backgroundColor: '#D4B942', animationDelay: '0.2s' }} />
+              <div className="w-2 h-2 rounded-full animate-pulse" 
+                   style={{ backgroundColor: '#D4B942', animationDelay: '0.4s' }} />
             </div>
-            <p className="text-sm" style={{ color: '#7E8381' }}>
+            <p className="text-sm font-medium" style={{ color: '#5A5A5A' }}>
               Monitoring {activeJobsCount} active job{activeJobsCount !== 1 ? 's' : ''}...
             </p>
           </div>
         )}
       </CardHeader>
       
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-4 p-6">
         {visibleJobs.map((job, index) => {
           const hasError = !!job.error;
           const status = job.status?.status;
@@ -203,77 +225,90 @@ export const EnhancedActiveJobs: React.FC<EnhancedActiveJobsProps> = ({
           return (
             <div
               key={job.jobId}
-              className="flex items-center justify-between p-4 rounded-lg border transition-all duration-200 hover:shadow-md"
+              className="group relative flex items-start justify-between p-5 rounded-xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus-within:ring-2 focus-within:ring-offset-2"
               style={{ 
                 backgroundColor: 'rgba(43, 128, 107, 0.02)',
-                borderColor: '#EBEBD3'
+                borderColor: '#F8F6F0',
+                boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
               }}
             >
-              <div className="flex items-center space-x-4 flex-1 min-w-0">
-                <div className="flex-shrink-0">
-                  {getStatusIcon(status, hasError)}
+              <div className="flex items-start space-x-4 flex-1 min-w-0">
+                <div className="flex-shrink-0 mt-1">
+                  <div className="p-2 rounded-lg transition-all duration-200 group-hover:scale-110" 
+                       style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+                    {getStatusIcon(status, hasError)}
+                  </div>
                 </div>
                 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <p className="font-semibold text-sm truncate" style={{ color: '#2B806B' }}>
-                      {job.url}
-                    </p>
-                    {getStatusBadge(status, hasError)}
-                  </div>
-                  
-                  <div className="flex items-center space-x-3 text-xs" style={{ color: '#7E8381' }}>
-                    <span>{job.domain}</span>
-                    <span>•</span>
-                    <span>{new Date(job.addedAt).toLocaleTimeString()}</span>
+                <div className="flex-1 min-w-0 space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-3">
+                      <h3 className="font-bold text-base truncate leading-tight" style={{ color: '#1B4D3E' }}>
+                        {job.url}
+                      </h3>
+                      <div className="flex-shrink-0">
+                        {getStatusBadge(status, hasError)}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 text-sm font-medium" style={{ color: '#5A5A5A' }}>
+                      <span className="px-2 py-1 rounded-md" style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+                        {job.domain}
+                      </span>
+                      <span className="text-xs">•</span>
+                      <span className="text-xs">
+                        Started: {new Date(job.addedAt).toLocaleString()}
+                      </span>
+                    </div>
+                    
                     {job.status?.processedAt && (
-                      <>
-                        <span>•</span>
-                        <span>Completed: {new Date(job.status.processedAt).toLocaleTimeString()}</span>
-                      </>
+                      <div className="text-xs font-medium" style={{ color: '#1B4D3E' }}>
+                        Completed: {new Date(job.status.processedAt).toLocaleString()}
+                      </div>
                     )}
                   </div>
                   
                   {hasError && job.error && (
-                    <p className="text-xs mt-1 font-medium" style={{ color: '#875B4E' }}>
-                      Error: {job.error}
-                    </p>
+                    <div className="p-3 rounded-lg border-l-4" 
+                         style={{ 
+                           backgroundColor: 'rgba(184, 84, 80, 0.05)',
+                           borderLeftColor: '#B85450'
+                         }}>
+                      <p className="text-sm font-semibold" style={{ color: '#B85450' }}>
+                        Error: {job.error}
+                      </p>
+                    </div>
                   )}
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2 flex-shrink-0">
-                {canViewSnapshot && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleViewSnapshot(job)}
-                    className="flex items-center space-x-1"
-                    style={{ borderColor: '#2B806B', color: '#2B806B' }}
-                  >
-                    <Eye className="w-3 h-3" />
-                    <span>View</span>
-                  </Button>
-                )}
-                
+              <div className="flex items-start space-x-2 flex-shrink-0 ml-4">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handleViewDomain(job.domain)}
-                  className="flex items-center space-x-1"
-                  style={{ borderColor: '#2B806B', color: '#2B806B' }}
+                  className="flex items-center space-x-2 transition-all duration-200 hover:scale-105 hover:shadow-md focus:ring-2 focus:ring-offset-2"
+                  style={{ 
+                    borderColor: '#1B4D3E', 
+                    color: '#1B4D3E',
+                    backgroundColor: 'rgba(43, 128, 107, 0.05)'
+                  }}
                 >
-                  <ArrowRight className="w-3 h-3" />
-                  <span>Domain</span>
+                  <ArrowRight className="w-4 h-4" />
+                  <span className="font-medium">View Domain</span>
                 </Button>
                 
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => removeJob(job.jobId)}
-                  className="w-8 h-8 p-0 hover:bg-red-50"
+                  className="w-9 h-9 p-0 rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-md focus:ring-2 focus:ring-offset-2"
+                  style={{ 
+                    color: '#B85450',
+                    backgroundColor: 'rgba(184, 84, 80, 0.05)'
+                  }}
                 >
-                  <X className="w-3 h-3" style={{ color: '#875B4E' }} />
+                  <X className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -281,10 +316,13 @@ export const EnhancedActiveJobs: React.FC<EnhancedActiveJobsProps> = ({
         })}
         
         {displayJobs.length > maxVisible && (
-          <div className="text-center pt-2">
-            <p className="text-sm" style={{ color: '#7E8381' }}>
-              Showing {maxVisible} of {displayJobs.length} jobs
-            </p>
+          <div className="text-center pt-6 border-t border-gray-50">
+            <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full" 
+                 style={{ backgroundColor: 'rgba(43, 128, 107, 0.1)' }}>
+              <span className="text-sm font-semibold" style={{ color: '#1B4D3E' }}>
+                Showing {maxVisible} of {displayJobs.length} jobs
+              </span>
+            </div>
           </div>
         )}
       </CardContent>

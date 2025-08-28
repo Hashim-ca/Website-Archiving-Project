@@ -89,7 +89,9 @@ class ApiClient {
 
   // View content endpoint (returns URL for viewing)
   getViewUrl(snapshotId: string, filePath: string = 'index.html'): string {
-    return `${this.baseUrl}/view/${snapshotId}/${filePath}`;
+    // Ensure we always use the absolute URL to the backend server
+    const backendUrl = this.baseUrl || 'http://localhost:3000';
+    return `${backendUrl}/view/${snapshotId}/${filePath}`;
   }
 }
 

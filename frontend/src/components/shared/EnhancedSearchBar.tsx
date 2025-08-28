@@ -192,50 +192,50 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
               placeholder={placeholder}
               disabled={isLoading}
               className={cn(
-                'h-14 text-lg pl-12 pr-4 rounded-xl border-2 transition-all duration-200 focus:scale-[1.02] shadow-sm',
+                'h-16 text-lg pl-14 pr-4 rounded-2xl border-2 transition-all duration-200 focus:scale-[1.01] shadow-sm font-medium',
                 showError ? 'border-red-500 focus-visible:ring-red-500' : 'focus:shadow-lg',
                 showSuggestions && allSuggestions.length > 0 ? 'rounded-b-none' : ''
               )}
               style={{
                 backgroundColor: 'white',
-                borderColor: showError ? '#875B4E' : '#7E8381',
+                borderColor: showError ? '#B85450' : '#5A5A5A',
               }}
             />
             <Search 
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" 
-              style={{ color: showError ? '#875B4E' : '#7E8381' }} 
+              className="absolute left-5 top-1/2 transform -translate-y-1/2 w-6 h-6" 
+              style={{ color: showError ? '#B85450' : '#5A5A5A' }} 
             />
             
             {/* Suggestions dropdown - positioned relative to input */}
             {showSuggestions && allSuggestions.length > 0 && (
               <Card 
                 ref={suggestionsRef}
-                className="absolute top-full left-0 right-0 z-50 shadow-xl border-2 rounded-t-none rounded-b-xl max-h-80 overflow-y-auto"
-                style={{ backgroundColor: 'white', borderColor: '#7E8381' }}
+                className="absolute top-full left-0 right-0 z-50 shadow-xl border-2 rounded-t-none rounded-b-2xl max-h-80 overflow-y-auto"
+                style={{ backgroundColor: 'white', borderColor: '#5A5A5A' }}
               >
                 <CardContent className="p-0">
                   {allSuggestions.map((suggestion, index) => (
                     <div
                       key={`${suggestion.type}-${suggestion.type === 'history' ? suggestion.item.id : suggestion.display}`}
                       className={cn(
-                        'flex items-center justify-between px-4 py-3 cursor-pointer transition-colors border-b last:border-b-0',
+                        'flex items-center justify-between px-5 py-4 cursor-pointer transition-all duration-150 border-b last:border-b-0',
                         index === selectedIndex ? 'bg-gray-100' : 'hover:bg-gray-50'
                       )}
-                      style={{ borderColor: '#EBEBD3' }}
+                      style={{ borderColor: '#F8F6F0' }}
                       onClick={() => handleSuggestionClick(suggestion)}
                     >
                       <div className="flex items-center space-x-3 flex-1 min-w-0">
                         {suggestion.type === 'history' ? (
-                          <Clock className="w-4 h-4 flex-shrink-0" style={{ color: '#7E8381' }} />
+                          <Clock className="w-4 h-4 flex-shrink-0" style={{ color: '#5A5A5A' }} />
                         ) : (
-                          <Globe className="w-4 h-4 flex-shrink-0" style={{ color: '#2B806B' }} />
+                          <Globe className="w-4 h-4 flex-shrink-0" style={{ color: '#1B4D3E' }} />
                         )}
                         
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-2 mb-1">
                             <span 
-                              className="font-medium truncate text-sm" 
-                              style={{ color: '#2B806B' }}
+                              className="font-semibold truncate text-sm" 
+                              style={{ color: '#1B4D3E' }}
                               title={suggestion.type === 'history' ? suggestion.item.url : suggestion.display}
                             >
                               {suggestion.type === 'history' ? suggestion.item.url : suggestion.display}
@@ -245,8 +245,8 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
                                 variant="outline" 
                                 className="px-1.5 py-0.5 text-xs flex-shrink-0"
                                 style={{ 
-                                  borderColor: suggestion.item.success ? '#2B806B' : '#875B4E',
-                                  color: suggestion.item.success ? '#2B806B' : '#875B4E'
+                                  borderColor: suggestion.item.success ? '#1B4D3E' : '#B85450',
+                                  color: suggestion.item.success ? '#1B4D3E' : '#B85450'
                                 }}
                               >
                                 {suggestion.item.success ? 'Success' : 'Failed'}
@@ -254,7 +254,7 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
                             )}
                           </div>
                           {suggestion.type === 'history' && (
-                            <p className="text-xs truncate" style={{ color: '#7E8381' }}>
+                            <p className="text-xs truncate" style={{ color: '#5A5A5A' }}>
                               {suggestion.item.domain} • {new Date(suggestion.item.timestamp).toLocaleDateString()}
                             </p>
                           )}
@@ -268,7 +268,7 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
                           className="w-6 h-6 p-0 hover:bg-red-50 flex-shrink-0 ml-2"
                           onClick={(e) => handleRemoveSuggestion(e, suggestion.item.id)}
                         >
-                          <X className="w-3 h-3" style={{ color: '#875B4E' }} />
+                          <X className="w-3 h-3" style={{ color: '#B85450' }} />
                         </Button>
                       )}
                     </div>
@@ -280,20 +280,21 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
           <Button
             type="submit"
             disabled={isLoading || !url.trim()}
-            className="h-14 px-8 text-lg font-semibold rounded-xl transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-lg flex items-center space-x-2"
+            className="h-16 px-10 text-lg font-bold rounded-2xl transition-all duration-200 hover:scale-[1.02] shadow-md hover:shadow-lg flex items-center space-x-3"
             style={{
-              backgroundColor: '#2B806B',
-              color: 'white',
+              backgroundColor: '#D4B942',
+              color: '#1B4D3E',
+              fontWeight: '700'
             }}
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <Loader2 className="w-6 h-6 animate-spin" />
                 <span>Archiving...</span>
               </>
             ) : (
               <>
-                <Search className="w-5 h-5" />
+                <Search className="w-6 h-6" />
                 <span>Archive</span>
               </>
             )}
@@ -305,12 +306,12 @@ export const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
             className="border-2 rounded-xl animate-scale-in shadow-sm"
             style={{ 
               backgroundColor: 'rgba(135, 91, 78, 0.05)', 
-              borderColor: '#875B4E' 
+              borderColor: '#B85450' 
             }}
           >
             <div className="flex items-start space-x-3">
-              <AlertTriangle className="w-5 h-5 mt-0.5" style={{ color: '#875B4E' }} />
-              <AlertDescription className="font-medium" style={{ color: '#875B4E' }}>
+              <AlertTriangle className="w-5 h-5 mt-0.5" style={{ color: '#B85450' }} />
+              <AlertDescription className="font-medium" style={{ color: '#B85450' }}>
                 {validation.errors[0].message}
               </AlertDescription>
             </div>
