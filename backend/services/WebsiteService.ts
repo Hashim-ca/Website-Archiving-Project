@@ -19,10 +19,27 @@ export class WebsiteService {
     try {
       const normalizedDomain = normalizeDomain(domain);
       
-      // Find website by normalized domain and populate snapshots
-      const website = await Website.findOne({ domain: normalizedDomain })
+      // Try to find website by normalized domain first, then with www. prefix
+      let website = await Website.findOne({ domain: normalizedDomain })
         .populate('snapshots')
         .exec() as IWebsiteWithPopulatedSnapshots | null;
+
+      // If not found with normalized domain, try with www. prefix
+      if (!website) {
+        const wwwDomain = `www.${normalizedDomain}`;
+        website = await Website.findOne({ domain: wwwDomain })
+          .populate('snapshots')
+          .exec() as IWebsiteWithPopulatedSnapshots | null;
+      }
+
+      // If still not found, try case-insensitive regex search as fallback
+      if (!website) {
+        website = await Website.findOne({ 
+          domain: { $regex: new RegExp(`^${normalizedDomain.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
+        })
+        .populate('snapshots')
+        .exec() as IWebsiteWithPopulatedSnapshots | null;
+      }
 
       if (!website) {
         return null;
