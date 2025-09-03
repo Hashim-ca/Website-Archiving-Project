@@ -21,7 +21,7 @@ This is the backend for the Website Archiving Project. It provides an API and a 
 
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone <your-repo-url>
 cd Website-Archiving-Project
 
 # Install dependencies
