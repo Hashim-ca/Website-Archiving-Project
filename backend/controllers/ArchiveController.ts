@@ -9,24 +9,6 @@ export class ArchiveController {
     this.archiveService = new ArchiveService();
   }
 
-  private async triggerJobProcessing(): Promise<void> {
-    try {
-      // Make a POST request to the process-job serverless function
-      const response = await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/process-job`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!response.ok) {
-        console.error('Failed to trigger job processing:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error triggering job processing:', error);
-    }
-  }
-
   /**
    * Handle POST /api/archive requests
    */
@@ -56,11 +38,6 @@ export class ArchiveController {
 
       // Create archive job
       const jobId = await this.archiveService.createArchiveJob(url.trim());
-
-      // Trigger job processing asynchronously
-      this.triggerJobProcessing().catch(error => {
-        console.error('Failed to trigger job processing:', error);
-      });
 
       // Return success response
       res.status(202).json({

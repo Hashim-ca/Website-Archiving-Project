@@ -1,6 +1,7 @@
 import { Readable } from 'stream';
 import { Types } from 'mongoose';
 import { Snapshot, ISnapshot } from '../models/Snapshot';
+import { R2StorageService } from './R2StorageService';
 
 export interface StreamResponse {
   stream: Readable;
@@ -9,8 +10,10 @@ export interface StreamResponse {
 }
 
 export class ViewService {
+  private r2Service: R2StorageService;
+
   constructor() {
-    // Using public R2 URLs now, no need for R2StorageService
+    this.r2Service = new R2StorageService();
   }
   /**
    * Gets the MIME type based on file extension
@@ -73,37 +76,36 @@ export class ViewService {
   }
 
   /**
-   * Fetches file from Cloudflare R2 public URL and returns stream
+   * Fetches file from Cloudflare R2 and returns stream
    */
   private async fetchFromR2(objectKey: string): Promise<StreamResponse> {
     try {
-      // Use the public R2 URL instead of AWS SDK
-      const publicUrl = `${process.env.CLOUDFLARE_PUBLIC_DEVELOPMENT_URL_R2}/${process.env.R2_BUCKET_PREFIX || 'web-archive-project'}/${objectKey}`;
-      
-      console.log(`Fetching file from R2 public URL: ${publicUrl}`);
-      
-      const response = await fetch(publicUrl);
-      
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('File not found in storage');
-        }
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      const response = await this.r2Service.getObject(objectKey);
+
+      if (!response.Body) {
+        throw new Error('Object not found in R2');
       }
 
-      // Get the response body as a stream
-      const arrayBuffer = await response.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      const stream = Readable.from(buffer);
+      // Convert AWS S3 Body to Node.js Readable stream
+      let stream: Readable;
+      if (response.Body instanceof Buffer) {
+        // If Body is a Buffer, create a readable stream from it
+        stream = Readable.from(response.Body);
+      } else {
+        // If Body is already a stream, use it directly
+        stream = response.Body as Readable;
+      }
 
       return {
         stream,
-        contentType: response.headers.get('content-type') || this.getContentType(objectKey),
-        contentLength: buffer.length
+        contentType: response.ContentType || this.getContentType(objectKey),
+        contentLength: response.ContentLength
       };
     } catch (error) {
       if (error instanceof Error) {
-        console.error('R2 fetch error:', error.message);
+        if (error.message.includes('NoSuchKey') || error.message.includes('NotFound')) {
+          throw new Error('File not found in storage');
+        }
         throw new Error(`Failed to fetch file from R2: ${error.message}`);
       }
       throw new Error('Failed to fetch file from R2: Unknown error');

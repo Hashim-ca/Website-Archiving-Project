@@ -24,12 +24,10 @@ async function connectToDatabase(): Promise<void> {
   }
 }
 
-// CORS configuration - allow all domains for deployment
+// CORS configuration for frontend development
 app.use(cors({
-  origin: true, // Allow all origins
+  origin: process.env.FRONTEND_URL || 'http://localhost:3001',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use(express.json());
